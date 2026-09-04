@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { CheckCircle2, XCircle, PartyPopper, RotateCcw, ArrowRight } from "lucide-react";
+import { CheckCircle2, XCircle, PartyPopper, RotateCcw, ArrowRight, Trophy } from "lucide-react";
+import { fireConfetti, fireBigConfetti } from "@/lib/confetti";
 
 interface Option {
   id: string;
@@ -25,14 +25,32 @@ interface Feedback {
   explanation: string;
 }
 
+interface QuizTheme {
+  progressBar: string;
+  bgTint: string;
+  text: string;
+  border: string;
+}
+
+const DEFAULT_THEME: QuizTheme = {
+  progressBar: "bg-brand-500",
+  bgTint: "bg-brand-50",
+  text: "text-brand-800",
+  border: "border-brand-400",
+};
+
 export function QuizEngine({
   quizId,
   moduleSlug,
   questions,
+  theme = DEFAULT_THEME,
+  themeHex,
 }: {
   quizId: string;
   moduleSlug: string;
   questions: Question[];
+  theme?: QuizTheme;
+  themeHex?: string;
 }) {
   const router = useRouter();
   const [index, setIndex] = useState(0);
@@ -40,7 +58,21 @@ export function QuizEngine({
   const [feedback, setFeedback] = useState<Record<string, Feedback>>({});
   const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ score: number; total: number } | null>(null);
+  const [result, setResult] = useState<{ score: number; total: number; moduleComplete?: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!result) return;
+    const passed = result.total > 0 && result.score / result.total >= 0.7;
+    if (!passed) return;
+
+    const colors = themeHex ? [themeHex, "#f97316"] : undefined;
+    if (result.moduleComplete) {
+      fireBigConfetti(colors);
+    } else {
+      fireConfetti(colors);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   const question = questions[index];
   const isLast = index === questions.length - 1;
@@ -98,26 +130,29 @@ export function QuizEngine({
   if (result) {
     const percent = Math.round((result.score / result.total) * 100);
     const passed = percent >= 70;
+    const moduleComplete = passed && result.moduleComplete;
 
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center card-shadow">
         <span
           className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${
-            passed ? "bg-brand-50 text-brand-600" : "bg-orange-50 text-accent-500"
+            passed ? `${theme.bgTint} ${theme.text}` : "bg-orange-50 text-accent-500"
           }`}
         >
-          <PartyPopper className="h-7 w-7" />
+          {moduleComplete ? <Trophy className="h-7 w-7" /> : <PartyPopper className="h-7 w-7" />}
         </span>
         <h2 className="mt-5 text-2xl font-semibold text-ink-900">
-          {result.score} / {result.total} correct
+          {moduleComplete ? "Module mastered!" : `${result.score} / ${result.total} correct`}
         </h2>
         <p className="mt-2 text-slate-500">
-          {passed
+          {moduleComplete
+            ? `You scored ${result.score}/${result.total} and completed every lesson in this module. Well done!`
+            : passed
             ? "Great work — you've passed this module check."
             : "Keep practicing — aim for 70% or higher to pass this check."}
         </p>
         <div className="mx-auto mt-5 max-w-xs">
-          <ProgressBar value={percent} />
+          <ProgressBar value={percent} barClassName={theme.progressBar} />
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button variant="outline" onClick={handleRetake}>
@@ -139,7 +174,11 @@ export function QuizEngine({
         </span>
         <span>{Object.keys(feedback).length}/{questions.length} answered</span>
       </div>
-      <ProgressBar value={(index / questions.length) * 100 + (currentFeedback ? 100 / questions.length : 0)} className="mb-8" />
+      <ProgressBar
+        value={(index / questions.length) * 100 + (currentFeedback ? 100 / questions.length : 0)}
+        className="mb-8"
+        barClassName={theme.progressBar}
+      />
 
       <div className="rounded-2xl border border-slate-200 bg-white p-7 card-shadow">
         <h2 className="text-lg font-semibold text-ink-900">{question.prompt}</h2>
@@ -152,7 +191,7 @@ export function QuizEngine({
             let stateClasses = "border-slate-200 hover:border-brand-300 hover:bg-brand-50/40";
             if (currentFeedback) {
               if (isCorrectOption) {
-                stateClasses = "border-brand-400 bg-brand-50 text-brand-800";
+                stateClasses = `${theme.border} ${theme.bgTint} ${theme.text}`;
               } else if (isSelected && !currentFeedback.isCorrect) {
                 stateClasses = "border-red-300 bg-red-50 text-red-700";
               } else {
@@ -168,7 +207,7 @@ export function QuizEngine({
                 className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors disabled:cursor-default ${stateClasses}`}
               >
                 <span>{option.label}</span>
-                {currentFeedback && isCorrectOption && <CheckCircle2 className="h-[18px] w-[18px] shrink-0 text-brand-500" />}
+                {currentFeedback && isCorrectOption && <CheckCircle2 className={`h-[18px] w-[18px] shrink-0 ${theme.text}`} />}
                 {currentFeedback && isSelected && !currentFeedback.isCorrect && (
                   <XCircle className="h-[18px] w-[18px] shrink-0 text-red-500" />
                 )}
@@ -180,7 +219,7 @@ export function QuizEngine({
         {currentFeedback && (
           <div
             className={`mt-5 rounded-xl px-4 py-3 text-sm ${
-              currentFeedback.isCorrect ? "bg-brand-50 text-brand-800" : "bg-orange-50 text-orange-800"
+              currentFeedback.isCorrect ? `${theme.bgTint} ${theme.text}` : "bg-orange-50 text-orange-800"
             }`}
           >
             <p className="font-medium">{currentFeedback.isCorrect ? "Correct!" : "Not quite."}</p>

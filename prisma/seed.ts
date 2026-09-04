@@ -16,6 +16,13 @@ interface LessonSeed {
   content: string;
 }
 
+interface VocabSeed {
+  dutch: string;
+  english: string;
+  exampleNl: string;
+  exampleEn: string;
+}
+
 interface ModuleSeed {
   slug: string;
   examPart: ExamPart;
@@ -24,6 +31,7 @@ interface ModuleSeed {
   icon: string;
   color: string;
   lessons: LessonSeed[];
+  vocabulary: VocabSeed[];
   quiz: { slug: string; title: string; questions: QuestionSeed[] };
 }
 
@@ -122,6 +130,75 @@ Scan for a date near "uiterlijk". Answer: 5 October.
 
 This is exactly the pattern used in the real reading exam: a short official text, followed by direct factual questions you can answer by scanning.`,
       },
+      {
+        slug: "reading-forms",
+        title: "Reading and filling in Dutch forms",
+        summary: "Recognising field labels on official application forms.",
+        minutes: 13,
+        content: `## Forms are everywhere
+
+Whether it's DigiD, a housing application, or a library card, Dutch forms (formulieren) reuse the same field labels again and again. Recognising them on sight saves real time in the exam — and in daily life.
+
+### Common form fields
+| Dutch label | English meaning |
+|---|---|
+| Voornaam | First name |
+| Achternaam / Familienaam | Last name / Surname |
+| Geboortedatum | Date of birth |
+| Geboorteplaats | Place of birth |
+| Nationaliteit | Nationality |
+| Adres | Address |
+| Postcode | Postal code |
+| Woonplaats | City of residence |
+| Burgerlijke staat | Marital status |
+| Handtekening | Signature |
+| Datum | Date |
+
+### Reading instructions on forms
+Forms often include short instruction phrases:
+- *"Vul in blokletters in"* — Fill in using block letters
+- *"Kruis het juiste vakje aan"* — Tick the correct box
+- *"Verplicht veld"* — Required field
+- *"Niet van toepassing"* — Not applicable (often abbreviated **n.v.t.**)
+
+> **Exam tip:** In the reading exam, a form-reading question usually asks you to match a piece of personal information to the correct field label. Practice by looking at any real form you receive and naming each field in Dutch before checking your answer.`,
+      },
+      {
+        slug: "reading-news",
+        title: "Reading simplified Dutch news",
+        summary: "Getting comfortable with headlines and short news items.",
+        minutes: 11,
+        content: `## Building up to real news
+
+Dutch news articles use more advanced vocabulary than official letters, but you don't need to jump straight to a full newspaper. A good progression:
+
+1. **NOS Jeugdjournaal** (news for children) — short articles, simple sentence structure, ideal starting point.
+2. **NU.nl short articles** — everyday news written in fairly plain language.
+3. **Metro / free newspapers** — short articles, practical topics (weather, local events, transport).
+
+### Reading a headline
+Dutch headlines often drop small words to stay short, which can make them feel harder than they are. For example:
+*"Trein vertraagd door werkzaamheden"* (Train delayed due to roadworks) — notice there's no "is" (the train **is** delayed); this dropped-verb style is common in headlines specifically, not in normal sentences.
+
+### A simple three-step approach
+1. Read the headline and guess the topic.
+2. Read the first paragraph only — Dutch news articles usually put the most important fact first (an "inverted pyramid" structure).
+3. Only read further if a question asks for more detail.
+
+> **Practice tip:** Pick one short NOS Jeugdjournaal article a day. Don't aim to understand 100% — aim to answer "what happened, where, and when?" from the first paragraph alone.`,
+      },
+    ],
+    vocabulary: [
+      { dutch: "de brief", english: "the letter", exampleNl: "Ik heb een brief van de gemeente ontvangen.", exampleEn: "I received a letter from the municipality." },
+      { dutch: "de afspraak", english: "the appointment", exampleNl: "Mijn afspraak is op maandag om negen uur.", exampleEn: "My appointment is on Monday at nine o'clock." },
+      { dutch: "het formulier", english: "the form", exampleNl: "Kunt u dit formulier invullen?", exampleEn: "Can you fill in this form?" },
+      { dutch: "de handtekening", english: "the signature", exampleNl: "Vergeet uw handtekening niet.", exampleEn: "Don't forget your signature." },
+      { dutch: "geldig", english: "valid", exampleNl: "Mijn paspoort is nog geldig.", exampleEn: "My passport is still valid." },
+      { dutch: "de aanvraag", english: "the application", exampleNl: "Ik doe een aanvraag voor huurtoeslag.", exampleEn: "I'm applying for rent subsidy." },
+      { dutch: "verplicht", english: "mandatory / required", exampleNl: "Een verblijfsvergunning is verplicht.", exampleEn: "A residence permit is mandatory." },
+      { dutch: "inleveren", english: "to hand in / submit", exampleNl: "U moet het formulier voor vrijdag inleveren.", exampleEn: "You must submit the form by Friday." },
+      { dutch: "controleren", english: "to check", exampleNl: "Controleer uw gegevens goed.", exampleEn: "Check your details carefully." },
+      { dutch: "ontvangen", english: "to receive", exampleNl: "Wanneer ontvang ik het antwoord?", exampleEn: "When will I receive the answer?" },
     ],
     quiz: {
       slug: "reading-check",
@@ -175,6 +252,21 @@ This is exactly the pattern used in the real reading exam: a short official text
             "at the very beginning",
             "only in emails, never in letters",
             "as a question to the reader",
+          ],
+        },
+        {
+          prompt: "On a Dutch form, what does 'n.v.t.' mean?",
+          explanation: "'n.v.t.' is short for 'niet van toepassing' — not applicable.",
+          options: ["Not applicable", "Not valid today", "New value type", "Not verified there"],
+        },
+        {
+          prompt: "Where do Dutch news articles usually put the most important fact?",
+          explanation: "Dutch news, like most news writing, uses an 'inverted pyramid' — most important information first.",
+          options: [
+            "In the first paragraph",
+            "In the last paragraph",
+            "In the headline only, never in the text",
+            "Only in a summary box",
           ],
         },
       ],
@@ -287,6 +379,75 @@ Try combining these two short sentences using a connector:
 
 Both are correct — using connectors like this is one of the fastest ways to sound more fluent in writing without learning new vocabulary.`,
       },
+      {
+        slug: "writing-forms",
+        title: "Filling in Dutch forms correctly",
+        summary: "Writing your own details accurately on official paperwork.",
+        minutes: 9,
+        content: `## From reading forms to filling them in
+
+You already learned to *recognise* form fields in the Reading module — now it's time to *fill them in* correctly and neatly, since this is also tested in the writing exam.
+
+### Golden rules for filling in forms
+- Write in **block letters (blokletters)** if asked — this avoids handwriting confusion.
+- Use the **Dutch date format**: day-month-year (e.g. 05-03-2026, not March 5).
+- For "Burgerlijke staat" (marital status), common answers are: *ongehuwd* (single), *gehuwd* (married), *gescheiden* (divorced), *weduwe/weduwnaar* (widow/widower).
+- Leave a field empty or write **n.v.t.** only when a field truly does not apply to you — never guess.
+
+### Example: a simple registration form
+\`\`\`
+Voornaam:         Amina
+Achternaam:       Yilmaz
+Geboortedatum:    12-04-1997
+Nationaliteit:    Turks
+Adres:            Kerkstraat 22
+Postcode:         5611 AB
+Woonplaats:       Eindhoven
+Burgerlijke staat: Gehuwd
+Datum:            04-09-2026
+Handtekening:     A. Yilmaz
+\`\`\`
+
+> **Exam tip:** Practice writing out your own real details in Dutch form-style at least once. It builds muscle memory you'll use for the rest of your life in the Netherlands, not just the exam.`,
+      },
+      {
+        slug: "writing-about-yourself",
+        title: "Writing a short introduction about yourself",
+        summary: "A reusable paragraph structure for exams, forms and daily life.",
+        minutes: 10,
+        content: `## The self-introduction paragraph
+
+Both the writing and speaking exams often ask you to describe yourself, your family, or your daily life. A simple, reusable structure works for almost any version of this task:
+
+1. **Who you are** — name, where you're from, how long you've lived in the Netherlands
+2. **What you do** — work, study, or care responsibilities
+3. **Your family situation** — who you live with
+4. **One personal detail** — a hobby, goal, or opinion
+
+### Example
+\`\`\`
+Ik heet Amina Yilmaz. Ik kom uit Turkije en woon sinds vier maanden
+in Eindhoven. Ik werk drie dagen per week in een winkel en ik leer
+Nederlands. Ik woon samen met mijn man. In mijn vrije tijd lees ik
+graag en ik wandel in het park.
+\`\`\`
+
+Notice each sentence is short and covers exactly one idea — this is much easier to get right than one long, complicated sentence.
+
+> **Practice tip:** Write your own version of this paragraph, then read it aloud. You now have a ready-made answer for both the writing exam and the speaking exam's "tell me about yourself" question.`,
+      },
+    ],
+    vocabulary: [
+      { dutch: "de voornaam", english: "first name", exampleNl: "Mijn voornaam is Amina.", exampleEn: "My first name is Amina." },
+      { dutch: "de achternaam", english: "last name / surname", exampleNl: "Wat is uw achternaam?", exampleEn: "What is your last name?" },
+      { dutch: "de geboortedatum", english: "date of birth", exampleNl: "Vul uw geboortedatum in.", exampleEn: "Fill in your date of birth." },
+      { dutch: "het adres", english: "the address", exampleNl: "Wat is uw nieuwe adres?", exampleEn: "What is your new address?" },
+      { dutch: "de postcode", english: "postal code", exampleNl: "De postcode staat op de envelop.", exampleEn: "The postal code is on the envelope." },
+      { dutch: "burgerlijke staat", english: "marital status", exampleNl: "Mijn burgerlijke staat is gehuwd.", exampleEn: "My marital status is married." },
+      { dutch: "de datum", english: "the date", exampleNl: "Schrijf de datum bovenaan.", exampleEn: "Write the date at the top." },
+      { dutch: "de woonplaats", english: "place of residence", exampleNl: "Mijn woonplaats is Eindhoven.", exampleEn: "My place of residence is Eindhoven." },
+      { dutch: "invullen", english: "to fill in", exampleNl: "Kunt u dit formulier invullen?", exampleEn: "Can you fill in this form?" },
+      { dutch: "de groet", english: "the greeting / regards", exampleNl: "Met vriendelijke groet.", exampleEn: "Kind regards." },
     ],
     quiz: {
       slug: "writing-check",
@@ -340,6 +501,21 @@ Both are correct — using connectors like this is one of the fastest ways to so
             "Using the longest words possible",
             "Writing as many pages as possible",
             "Avoiding all greetings",
+          ],
+        },
+        {
+          prompt: "What is the correct Dutch date format?",
+          explanation: "Dutch dates are written day-month-year, e.g. 05-03-2026.",
+          options: ["Day-month-year (05-03-2026)", "Month-day-year (03-05-2026)", "Year-day-month", "Month name only"],
+        },
+        {
+          prompt: "In a short self-introduction paragraph, what should come first?",
+          explanation: "Starting with who you are (name, origin, how long in NL) gives the reader context before other details.",
+          options: [
+            "Who you are — name and background",
+            "Your opinion about the weather",
+            "A random hobby with no context",
+            "The date you are writing",
           ],
         },
       ],
@@ -426,6 +602,68 @@ Phone conversations are common in the listening exam because they reflect real s
 
 Knowing this last phrase is genuinely useful in real life, not just the exam — Dutch speakers are usually happy to slow down if you ask politely.`,
       },
+      {
+        slug: "listening-announcements",
+        title: "Understanding public announcements",
+        summary: "Train stations, weather forecasts, and shop announcements.",
+        minutes: 10,
+        content: `## Announcements come in predictable patterns
+
+Public announcements (omroepberichten) always follow a similar structure, which makes them easier to prepare for than free conversation.
+
+### Train and bus announcements
+- "De trein naar Utrecht heeft een vertraging van tien minuten." — The train to Utrecht has a delay of ten minutes.
+- "Reizigers voor Amsterdam wordt verzocht over te stappen op perron 4." — Passengers for Amsterdam are requested to change at platform 4.
+- Listen especially for: destination city, platform number (perron), and the delay/reason.
+
+### Weather forecasts (weerbericht)
+- "Vandaag wordt het bewolkt met kans op regen." — Today will be cloudy with a chance of rain.
+- "Morgen schijnt de zon en wordt het achttien graden." — Tomorrow the sun will shine and it will be eighteen degrees.
+- Key words: *bewolkt* (cloudy), *zonnig* (sunny), *regen* (rain), *graden* (degrees), *wind* (wind).
+
+### Shop and supermarket announcements
+- "Let op: de winkel sluit over tien minuten." — Attention: the shop closes in ten minutes.
+- "Klant aan kassa 3 wordt verwacht." — Customer expected at checkout 3.
+
+> **Practice tip:** These announcements repeat the same handful of sentence patterns constantly — once you've heard a few, you'll start predicting what comes next, which is exactly the skill the exam rewards.`,
+      },
+      {
+        slug: "listening-tone",
+        title: "Listening for tone and emotion",
+        summary: "Recognising politeness, urgency and hesitation in spoken Dutch.",
+        minutes: 9,
+        content: `## It's not just what is said — it's how
+
+Some listening exam questions ask about a speaker's *feeling* or *intention*, not just facts. Dutch speakers signal tone in fairly recognisable ways.
+
+### Politeness and hedging
+Dutch, despite its reputation for directness, uses softening words in service situations:
+- "Zou u misschien..." — "Would you perhaps..." (a polite request)
+- "Het spijt me, maar..." — "I'm sorry, but..." (a polite refusal is coming)
+- "Helaas..." — "Unfortunately..." (signals bad news follows)
+
+### Urgency
+- A faster speaking pace, combined with words like *nu meteen* (right now) or *dringend* (urgent), signals real urgency — for example in a medical or safety context.
+
+### Hesitation or uncertainty
+- "Ik weet het niet zeker, maar..." — "I'm not sure, but..."
+- "Misschien..." — "Maybe..."
+- A speaker trailing off or using "eh..." (um...) often signals they are unsure or thinking.
+
+> **Exam tip:** If a question asks "how does the speaker feel?" or "what does the speaker want?", listen for these tone signals rather than searching for one exact keyword — the answer is often about *how* something is said.`,
+      },
+    ],
+    vocabulary: [
+      { dutch: "de vertraging", english: "the delay", exampleNl: "De trein heeft een vertraging van tien minuten.", exampleEn: "The train has a delay of ten minutes." },
+      { dutch: "het perron", english: "the platform", exampleNl: "De trein vertrekt van perron 2.", exampleEn: "The train departs from platform 2." },
+      { dutch: "de aankomst", english: "the arrival", exampleNl: "Wat is de aankomsttijd?", exampleEn: "What is the arrival time?" },
+      { dutch: "het vertrek", english: "the departure", exampleNl: "Het vertrek is om acht uur.", exampleEn: "The departure is at eight o'clock." },
+      { dutch: "het weerbericht", english: "the weather forecast", exampleNl: "Heb je het weerbericht gehoord?", exampleEn: "Did you hear the weather forecast?" },
+      { dutch: "bewolkt", english: "cloudy", exampleNl: "Morgen is het bewolkt.", exampleEn: "Tomorrow it will be cloudy." },
+      { dutch: "zonnig", english: "sunny", exampleNl: "Het wordt een zonnige dag.", exampleEn: "It will be a sunny day." },
+      { dutch: "druk", english: "busy / crowded", exampleNl: "Het station is erg druk vandaag.", exampleEn: "The station is very busy today." },
+      { dutch: "rustig", english: "quiet / calm", exampleNl: "De trein was rustig, bijna leeg.", exampleEn: "The train was quiet, almost empty." },
+      { dutch: "herhalen", english: "to repeat", exampleNl: "Kunt u dat nog een keer herhalen?", exampleEn: "Can you repeat that once more?" },
     ],
     quiz: {
       slug: "listening-check",
@@ -464,6 +702,21 @@ Knowing this last phrase is genuinely useful in real life, not just the exam —
             "Only textbook audio",
             "Watching films with no sound",
             "Reading silently",
+          ],
+        },
+        {
+          prompt: "In a train announcement, what does 'perron' mean?",
+          explanation: "'Perron' means 'platform' — the place where you board the train.",
+          options: ["Platform", "Ticket", "Delay", "Driver"],
+        },
+        {
+          prompt: "If a speaker says 'Het spijt me, maar...', what usually follows?",
+          explanation: "'Het spijt me, maar...' ('I'm sorry, but...') signals a polite refusal or bad news is coming.",
+          options: [
+            "A polite refusal or piece of bad news",
+            "An enthusiastic yes",
+            "A joke",
+            "A phone number",
           ],
         },
       ],
@@ -538,6 +791,77 @@ Many learners avoid speaking practice because they're afraid of making mistakes 
 
 > **Reminder:** The AI assistant is a practice partner, not an official exam source. Use it to rehearse, then verify anything important against your course materials or a teacher.`,
       },
+      {
+        slug: "speaking-work-routine",
+        title: "Talking about work and your daily routine",
+        summary: "A ready-made vocabulary set for one of the most common exam topics.",
+        minutes: 10,
+        content: `## Describing your day
+
+"Tell me about your daily routine" is one of the most predictable speaking exam questions — which means it's one of the easiest to prepare for in advance.
+
+### A simple daily routine script
+\`\`\`
+Ik sta meestal om zeven uur op. Ik ontbijt en dan ga ik naar mijn werk.
+Ik werk als [beroep] bij [bedrijf]. 's Middags eet ik met mijn collega's.
+Na mijn werk ga ik naar huis en kook ik. 's Avonds kijk ik televisie of
+ik leer Nederlands.
+\`\`\`
+
+### Useful time markers
+| Dutch | Meaning |
+|---|---|
+| 's ochtends | in the morning |
+| 's middags | in the afternoon |
+| 's avonds | in the evening |
+| meestal | usually |
+| daarna | after that |
+| eerst... dan... | first... then... |
+
+### Talking about work specifically
+- "Ik werk als [job title]." — "I work as a [job title]."
+- "Ik werk fulltime / parttime." — "I work full-time / part-time."
+- "Mijn collega's zijn aardig." — "My colleagues are nice."
+
+> **Practice tip:** Write out your own real daily routine using this script, then say it out loud three times until it feels automatic — you'll likely be asked a version of this question in the real exam.`,
+      },
+      {
+        slug: "speaking-small-talk",
+        title: "Making small talk like a local",
+        summary: "Weather, weekends, and the untranslatable word 'gezellig'.",
+        minutes: 9,
+        content: `## Small talk, Dutch style
+
+Dutch small talk (een praatje maken) is shorter and more direct than in many cultures, but it still follows predictable patterns — useful both for the exam and for daily life.
+
+### The weather — always a safe topic
+- "Wat een mooi weer, hè?" — "Lovely weather, isn't it?"
+- "Zeg, wat regent het hard!" — "Wow, it's really raining hard!"
+
+### Asking about someone's weekend
+- "Heb je een leuk weekend gehad?" — "Did you have a nice weekend?"
+- "Wat ga je dit weekend doen?" — "What are you going to do this weekend?"
+
+### The word every learner should know: gezellig
+*Gezellig* has no direct English translation — it describes a warm, cosy, sociable feeling. A crowded, friendly café is *gezellig*. A pleasant evening with friends is *gezellig*. Dutch people use this word constantly, and using it naturally yourself is a strong sign of cultural fluency.
+
+- "Wat gezellig hier!" — "What a nice, cosy atmosphere here!"
+- "Het was gezellig gisteren." — "It was pleasant/fun yesterday."
+
+> **Exam tip:** Examiners like to hear natural social phrases like these — they show you can function socially in Dutch, not just answer direct questions.`,
+      },
+    ],
+    vocabulary: [
+      { dutch: "de baan", english: "the job", exampleNl: "Ik heb een nieuwe baan gevonden.", exampleEn: "I found a new job." },
+      { dutch: "de collega", english: "the colleague", exampleNl: "Mijn collega's zijn erg aardig.", exampleEn: "My colleagues are very nice." },
+      { dutch: "dagelijks", english: "daily", exampleNl: "Dit is mijn dagelijkse routine.", exampleEn: "This is my daily routine." },
+      { dutch: "de ochtend", english: "the morning", exampleNl: "'s Ochtends drink ik koffie.", exampleEn: "In the morning I drink coffee." },
+      { dutch: "de avond", english: "the evening", exampleNl: "'s Avonds leer ik Nederlands.", exampleEn: "In the evening I study Dutch." },
+      { dutch: "het weekend", english: "the weekend", exampleNl: "Wat doe je dit weekend?", exampleEn: "What are you doing this weekend?" },
+      { dutch: "de vrije tijd", english: "free time", exampleNl: "In mijn vrije tijd lees ik graag.", exampleEn: "In my free time I like to read." },
+      { dutch: "de hobby", english: "the hobby", exampleNl: "Wat is jouw hobby?", exampleEn: "What is your hobby?" },
+      { dutch: "gezellig", english: "cosy / pleasant (untranslatable Dutch feeling)", exampleNl: "Het was heel gezellig gisteren.", exampleEn: "It was really nice and cosy yesterday." },
+      { dutch: "een praatje maken", english: "to make small talk", exampleNl: "Ik maak graag een praatje met de buren.", exampleEn: "I like to make small talk with the neighbours." },
     ],
     quiz: {
       slug: "speaking-check",
@@ -586,6 +910,26 @@ Many learners avoid speaking practice because they're afraid of making mistakes 
             "As the official government exam authority",
             "As a replacement for the real exam",
             "As something to avoid entirely",
+          ],
+        },
+        {
+          prompt: "What does 'gezellig' describe?",
+          explanation: "'Gezellig' is a uniquely Dutch word describing a warm, cosy, sociable atmosphere.",
+          options: [
+            "A warm, cosy, sociable feeling or atmosphere",
+            "A type of Dutch food",
+            "An official government document",
+            "A grammar rule about verbs",
+          ],
+        },
+        {
+          prompt: "Which phrase would you use to ask about someone's weekend?",
+          explanation: "'Heb je een leuk weekend gehad?' is a natural, common small-talk question.",
+          options: [
+            "Heb je een leuk weekend gehad?",
+            "Wat is uw burgerlijke staat?",
+            "Kunt u dit formulier invullen?",
+            "Wat is de postcode?",
           ],
         },
       ],
@@ -680,6 +1024,74 @@ The Netherlands has a relatively flexible labour market with strong worker prote
 | Minimumloon | Minimum wage |
 | Vakantiegeld | Holiday allowance |`,
       },
+      {
+        slug: "knm-history-culture",
+        title: "Dutch history and culture essentials",
+        summary: "The Golden Age, water management, WWII, and national holidays.",
+        minutes: 16,
+        content: `## History that shapes daily life today
+
+You don't need a full history degree for the KNM exam, but a handful of well-known events and facts come up repeatedly because they explain *why* Dutch society works the way it does today.
+
+### Water and the land
+A large part of the Netherlands lies below sea level — the word "Nederland" literally means "low country." The Dutch have managed water for centuries using **dijken** (dikes), **polders** (reclaimed land), and pumping systems (historically windmills, today electric pumps). The **Watersnoodramp** (flood disaster) of 1953 killed over 1,800 people and led to the **Deltawerken** (Delta Works), a massive modern flood-defence system.
+
+### The Gouden Eeuw (Golden Age)
+In the 17th century, the Dutch Republic became a major global trading power, with Amsterdam as a wealthy trade hub. This period produced famous painters like Rembrandt and Vermeer, and also the Dutch East India Company (VOC) — a period with significant historical complexity, including colonialism, that is increasingly discussed openly today.
+
+### World War II
+The Netherlands was occupied by Nazi Germany from 1940 to 1945. **Bevrijdingsdag** (Liberation Day, 5 May) commemorates the end of the occupation, and **Dodenherdenking** (Remembrance Day, 4 May) honours those who died. Anne Frank's diary, written while hiding in Amsterdam, is one of the most well-known accounts of this period worldwide.
+
+### National holidays worth knowing
+| Dutch | English | When |
+|---|---|---|
+| Koningsdag | King's Day | 27 April |
+| Bevrijdingsdag | Liberation Day | 5 May |
+| Sinterklaas | St. Nicholas' Eve | 5 December |
+| Kerstmis | Christmas | 25-26 December |`,
+      },
+      {
+        slug: "knm-values-daily-life",
+        title: "Dutch values, norms and daily life",
+        summary: "Directness, punctuality, cycling culture and equality.",
+        minutes: 13,
+        content: `## Cultural norms that surprise newcomers
+
+The KNM exam often tests whether you understand common Dutch social norms — not because there's one "correct" culture, but because understanding these norms helps you navigate daily interactions confidently.
+
+### Directness (directheid)
+Dutch communication style is often very direct compared to many other cultures. A Dutch person might say "no" plainly, or give blunt feedback, without intending to be rude — this is simply considered honest and efficient, not impolite.
+
+### Punctuality (stiptheid)
+Being on time for appointments — including doctor's appointments, work meetings, and even social visits — is taken seriously. Being more than a few minutes late without notice is generally considered impolite.
+
+### Fietscultuur (cycling culture)
+Cycling is a core part of Dutch daily life, used for commuting, shopping, and school runs by people of all ages — not primarily a sport or hobby. Understanding basic cycling rules (staying right, using hand signals, respecting bike paths) is practically important, not just cultural trivia.
+
+### Equality and tolerance
+Dutch law strongly protects equal treatment regardless of gender, sexuality, religion, or origin (this is enshrined in Article 1 of the **Grondwet**, the Dutch constitution). The Netherlands was the first country in the world to legalise same-sex marriage, in 2001.
+
+### Key vocabulary
+| Dutch | English |
+|---|---|
+| Directheid | Directness |
+| Stiptheid | Punctuality |
+| Gelijkheid | Equality |
+| Tolerantie | Tolerance |
+| Grondwet | Constitution |`,
+      },
+    ],
+    vocabulary: [
+      { dutch: "de Koning", english: "the King", exampleNl: "De Koning woont in Den Haag.", exampleEn: "The King lives in The Hague." },
+      { dutch: "de gemeente", english: "the municipality", exampleNl: "Ik moet naar de gemeente voor mijn paspoort.", exampleEn: "I need to go to the municipality for my passport." },
+      { dutch: "de dijk", english: "the dike", exampleNl: "De dijk beschermt het land tegen water.", exampleEn: "The dike protects the land against water." },
+      { dutch: "de polder", english: "the polder (reclaimed land)", exampleNl: "Veel Nederlandse steden liggen in een polder.", exampleEn: "Many Dutch cities lie in a polder." },
+      { dutch: "de fiets", english: "the bicycle", exampleNl: "Ik ga met de fiets naar mijn werk.", exampleEn: "I go to work by bicycle." },
+      { dutch: "Koningsdag", english: "King's Day", exampleNl: "Op Koningsdag draagt iedereen oranje.", exampleEn: "On King's Day everyone wears orange." },
+      { dutch: "Bevrijdingsdag", english: "Liberation Day", exampleNl: "Bevrijdingsdag is op 5 mei.", exampleEn: "Liberation Day is on 5 May." },
+      { dutch: "de gelijkheid", english: "equality", exampleNl: "Gelijkheid staat in de Grondwet.", exampleEn: "Equality is written in the Constitution." },
+      { dutch: "de belasting", english: "the tax", exampleNl: "Ik betaal elk jaar belasting.", exampleEn: "I pay tax every year." },
+      { dutch: "de verzekering", english: "the insurance", exampleNl: "Iedereen heeft een zorgverzekering nodig.", exampleEn: "Everyone needs health insurance." },
     ],
     quiz: {
       slug: "knm-check",
@@ -734,6 +1146,26 @@ The Netherlands has a relatively flexible labour market with strong worker prote
           prompt: "In the Dutch secondary school system, which track is the most academic, preparing for university?",
           explanation: "VWO is the most academically oriented secondary track, preparing students for university (WO).",
           options: ["vwo", "vmbo", "basisschool", "mbo"],
+        },
+        {
+          prompt: "What event does Bevrijdingsdag (5 May) commemorate?",
+          explanation: "Bevrijdingsdag celebrates the liberation of the Netherlands from Nazi occupation at the end of World War II.",
+          options: [
+            "The end of Nazi occupation in 1945",
+            "The founding of the monarchy",
+            "The start of the Golden Age",
+            "A national cycling day",
+          ],
+        },
+        {
+          prompt: "Which best describes typical Dutch communication style?",
+          explanation: "Dutch communication is often very direct — this is generally considered honest and efficient, not rude.",
+          options: [
+            "Direct and honest, even when giving critical feedback",
+            "Always indirect to avoid conflict",
+            "Silent and reserved in all situations",
+            "Focused only on formal written communication",
+          ],
         },
       ],
     },
@@ -790,6 +1222,21 @@ async function main() {
       });
     }
 
+    await prisma.vocabularyItem.deleteMany({ where: { moduleId: moduleRecord.id } });
+    for (let v = 0; v < m.vocabulary.length; v++) {
+      const item = m.vocabulary[v];
+      await prisma.vocabularyItem.create({
+        data: {
+          moduleId: moduleRecord.id,
+          dutch: item.dutch,
+          english: item.english,
+          exampleNl: item.exampleNl,
+          exampleEn: item.exampleEn,
+          order: v,
+        },
+      });
+    }
+
     const existingQuiz = await prisma.quiz.findUnique({
       where: { moduleId_slug: { moduleId: moduleRecord.id, slug: m.quiz.slug } },
     });
@@ -834,7 +1281,9 @@ async function main() {
       }
     }
 
-    console.log(`  ✓ ${m.title}: ${m.lessons.length} lessons, ${m.quiz.questions.length} quiz questions`);
+    console.log(
+      `  ✓ ${m.title}: ${m.lessons.length} lessons, ${m.vocabulary.length} vocab items, ${m.quiz.questions.length} quiz questions`
+    );
   }
 
   console.log("Seed complete.");

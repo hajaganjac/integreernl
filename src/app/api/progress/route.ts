@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { recordActivity } from "@/lib/streak";
 
 const schema = z.object({
   lessonId: z.string(),
@@ -36,6 +37,10 @@ export async function POST(request: Request) {
       completedAt: completed ? new Date() : null,
     },
   });
+
+  if (completed) {
+    await recordActivity(session.user.id);
+  }
 
   return NextResponse.json(progress);
 }

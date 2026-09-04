@@ -31,7 +31,7 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
 
-    const userMessage: Message = { id: `tmp-${Date.now()}`, role: "user", content: text };
+    const userMessage: Message = { id: `tmp-${crypto.randomUUID()}`, role: "user", content: text };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
@@ -47,12 +47,12 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
       if (!res.ok) {
         setMessages((prev) => [
           ...prev,
-          { id: `err-${Date.now()}`, role: "assistant", content: "Sorry, something went wrong. Please try again." },
+          { id: `err-${crypto.randomUUID()}`, role: "assistant", content: "Sorry, something went wrong. Please try again." },
         ]);
         return;
       }
 
-      setMessages((prev) => [...prev, { id: `reply-${Date.now()}`, role: "assistant", content: data.reply }]);
+      setMessages((prev) => [...prev, { id: `reply-${crypto.randomUUID()}`, role: "assistant", content: data.reply }]);
     } finally {
       setLoading(false);
     }

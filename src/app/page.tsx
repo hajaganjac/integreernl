@@ -1,12 +1,8 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import {
-  BookOpen,
-  PenLine,
-  Headphones,
-  Mic,
-  Landmark,
   Sparkles,
   BarChart3,
   MessageCircle,
@@ -15,14 +11,20 @@ import {
   Quote,
   CheckCircle2,
 } from "lucide-react";
+import { MODULE_THEME, MODULE_IMAGE } from "@/lib/moduleTheme";
+import { ModuleIcon } from "@/components/courses/ModuleIcon";
+import { EXAM_PART_META } from "@/lib/utils";
+import type { ExamPart } from "@prisma/client";
 
-const EXAM_PARTS = [
-  { icon: BookOpen, label: "Reading", nl: "Lezen", desc: "Understand Dutch texts, letters and forms." },
-  { icon: PenLine, label: "Writing", nl: "Schrijven", desc: "Write short texts, emails and messages." },
-  { icon: Headphones, label: "Listening", nl: "Luisteren", desc: "Follow spoken Dutch in daily situations." },
-  { icon: Mic, label: "Speaking", nl: "Spreken", desc: "Speak confidently in everyday conversations." },
-  { icon: Landmark, label: "Dutch Society", nl: "KNM", desc: "Know how Dutch society and institutions work." },
+const EXAM_PART_ORDER: { part: ExamPart; icon: string; desc: string }[] = [
+  { part: "READING", icon: "BookOpen", desc: "Understand Dutch texts, letters and forms." },
+  { part: "WRITING", icon: "PenLine", desc: "Write short texts, emails and messages." },
+  { part: "LISTENING", icon: "Headphones", desc: "Follow spoken Dutch in daily situations." },
+  { part: "SPEAKING", icon: "Mic", desc: "Speak confidently in everyday conversations." },
+  { part: "KNM", icon: "Landmark", desc: "Know how Dutch society and institutions work." },
 ];
+
+const MOCK_PROGRESS = [80, 45, 60, 20, 90];
 
 const FEATURES = [
   {
@@ -32,13 +34,13 @@ const FEATURES = [
   },
   {
     icon: BarChart3,
-    title: "Adaptive quizzes",
-    desc: "Short quizzes per topic with instant feedback, so a spare 10 minutes is always useful — no wasted study time.",
+    title: "Adaptive quizzes & flashcards",
+    desc: "Short quizzes with instant feedback, plus flip-card vocabulary practice with pronunciation — so a spare 10 minutes is always useful.",
   },
   {
     icon: CheckCircle2,
     title: "See real progress",
-    desc: "A visual dashboard tracks what's done and what's left, so a three-year deadline feels manageable, not overwhelming.",
+    desc: "A visual dashboard, streaks and achievement badges track what's done and what's left — so three years feels manageable, not overwhelming.",
   },
 ];
 
@@ -75,7 +77,7 @@ export default function Home() {
             <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
               IntegreerNL is a free, structured self-study platform for family-migrants
               working toward the Dutch B1 civic integration exam — with guided lessons,
-              adaptive quizzes, an AI study buddy, and real progress tracking.
+              adaptive quizzes, vocabulary flashcards, an AI study buddy, and real progress tracking.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Button href="/register" size="lg">
@@ -85,7 +87,7 @@ export default function Home() {
                 See the exam parts
               </Button>
             </div>
-            <div className="mt-8 flex items-center gap-6 text-sm text-slate-500">
+            <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-slate-500">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-brand-500" /> No hidden fees
               </div>
@@ -96,35 +98,44 @@ export default function Home() {
           </div>
 
           <div className="relative">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 card-shadow">
+            <div className="relative h-80 w-full overflow-hidden rounded-3xl shadow-xl sm:h-96">
+              <Image
+                src="/images/hero-amsterdam.jpg"
+                alt="Amsterdam canal houses at dusk"
+                fill
+                priority
+                className="object-cover"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-900/60 via-ink-900/5 to-transparent" />
+            </div>
+
+            <div className="absolute -bottom-8 -left-6 w-64 rounded-2xl border border-slate-200 bg-white p-5 card-shadow sm:-left-10">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-ink-900">Your progress</p>
                 <Badge>B1 track</Badge>
               </div>
-              <div className="mt-5 space-y-4">
-                {EXAM_PARTS.map((part, i) => (
-                  <div key={part.label} className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                      <part.icon className="h-[18px] w-[18px]" />
-                    </span>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-medium text-ink-900">{part.label}</span>
-                        <span className="text-slate-400">{[80, 45, 60, 20, 90][i]}%</span>
-                      </div>
-                      <div className="mt-1 h-1.5 w-full rounded-full bg-slate-100">
+              <div className="mt-4 space-y-3">
+                {EXAM_PART_ORDER.map(({ part, icon }, i) => {
+                  const theme = MODULE_THEME[part];
+                  return (
+                    <div key={part} className="flex items-center gap-2.5">
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}>
+                        <ModuleIcon name={icon} className="h-3.5 w-3.5" />
+                      </span>
+                      <div className="h-1.5 w-full rounded-full bg-slate-100">
                         <div
-                          className="h-full rounded-full bg-brand-500"
-                          style={{ width: `${[80, 45, 60, 20, 90][i]}%` }}
+                          className={`h-full rounded-full ${theme.progressBar}`}
+                          style={{ width: `${MOCK_PROGRESS[i]}%` }}
                         />
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
-            <div className="absolute -bottom-6 -left-6 hidden rounded-xl border border-slate-200 bg-white p-4 card-shadow sm:block">
+            <div className="absolute -top-6 -right-4 hidden rounded-xl border border-slate-200 bg-white p-4 card-shadow sm:block">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-accent-500">
                   <MessageCircle className="h-4 w-4" />
@@ -199,20 +210,37 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            {EXAM_PARTS.map((part) => (
-              <div
-                key={part.label}
-                className="group rounded-2xl border border-slate-200 p-6 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600 group-hover:bg-white">
-                  <part.icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-4 font-semibold text-ink-900">{part.label}</h3>
-                <p className="text-xs font-medium text-brand-500">{part.nl}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-500">{part.desc}</p>
-              </div>
-            ))}
+          <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {EXAM_PART_ORDER.map(({ part, icon, desc }) => {
+              const theme = MODULE_THEME[part];
+              const meta = EXAM_PART_META[part];
+              const image = MODULE_IMAGE[part];
+              return (
+                <div
+                  key={part}
+                  className={`group overflow-hidden rounded-2xl border border-slate-200 transition-all hover:-translate-y-1 ${theme.borderHover}`}
+                >
+                  <div className="relative h-24 w-full overflow-hidden">
+                    <Image
+                      src={image}
+                      alt=""
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(min-width: 1024px) 20vw, 50vw"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-t ${theme.gradient} opacity-75`} />
+                    <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white ring-1 ring-inset ring-white/30 backdrop-blur-sm">
+                      <ModuleIcon name={icon} className="h-4 w-4" />
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-ink-900">{meta.label}</h3>
+                    <p className={`text-xs font-medium ${theme.text}`}>{meta.nl}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">{desc}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-10 text-center">
@@ -234,9 +262,14 @@ export default function Home() {
               private course wasn&rsquo;t realistic. I just needed a clear place to start,
               and something that fits into a tired evening after work.&rdquo;
             </p>
-            <p className="mt-6 text-sm text-slate-400">
-              Amina, 29 — illustrative persona based on family-migrant research
-            </p>
+            <div className="mt-6 flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                A
+              </span>
+              <p className="text-sm text-slate-400">
+                Amina, 29 — illustrative persona based on family-migrant research
+              </p>
+            </div>
           </div>
         </Container>
       </section>
@@ -267,16 +300,26 @@ export default function Home() {
       {/* CTA banner */}
       <section>
         <Container className="pb-24">
-          <div className="rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 px-8 py-14 text-center text-white sm:px-16">
-            <h2 className="text-2xl font-semibold sm:text-3xl">Your B1 journey starts today</h2>
-            <p className="mx-auto mt-3 max-w-xl text-brand-100">
-              Create a free account and get a personalised study plan across all five exam
-              parts — no course fee, no loan, no waitlist.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Button href="/register" variant="secondary" size="lg">
-                Create free account <ArrowRight className="h-4 w-4" />
-              </Button>
+          <div className="relative overflow-hidden rounded-2xl px-8 py-16 text-center text-white sm:px-16">
+            <Image
+              src="/images/tulips-field.jpg"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(min-width: 1024px) 80vw, 100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-900/80 via-ink-900/55 to-brand-800/80" />
+            <div className="relative">
+              <h2 className="text-2xl font-semibold sm:text-3xl">Your B1 journey starts today</h2>
+              <p className="mx-auto mt-3 max-w-xl text-brand-100">
+                Create a free account and get a personalised study plan across all five exam
+                parts — no course fee, no loan, no waitlist.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button href="/register" variant="secondary" size="lg">
+                  Create free account <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </Container>

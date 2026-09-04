@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Container } from "@/components/ui/Container";
-import { Badge } from "@/components/ui/Badge";
 import { LessonContent } from "@/components/courses/LessonContent";
 import { LessonComplete } from "@/components/courses/LessonComplete";
 import { Clock, ArrowLeft, ArrowRight, ClipboardCheck } from "lucide-react";
+import { MODULE_THEME } from "@/lib/moduleTheme";
 
 export default async function LessonPage({
   params,
@@ -16,16 +16,16 @@ export default async function LessonPage({
   const { moduleSlug, lessonSlug } = await params;
   const session = await auth();
 
-  const module = await prisma.module.findUnique({
+  const courseModule = await prisma.module.findUnique({
     where: { slug: moduleSlug },
     include: {
       lessons: { orderBy: { order: "asc" } },
       quizzes: true,
     },
   });
-  if (!module) notFound();
+  if (!courseModule) notFound();
 
-  const lesson = module.lessons.find((l) => l.slug === lessonSlug);
+  const lesson = courseModule.lessons.find((l) => l.slug === lessonSlug);
   if (!lesson) notFound();
 
   const progress = session?.user?.id
@@ -34,25 +34,26 @@ export default async function LessonPage({
       })
     : null;
 
-  const index = module.lessons.findIndex((l) => l.id === lesson.id);
-  const prevLesson = index > 0 ? module.lessons[index - 1] : null;
-  const nextLesson = index < module.lessons.length - 1 ? module.lessons[index + 1] : null;
-  const isLastLesson = index === module.lessons.length - 1;
+  const index = courseModule.lessons.findIndex((l) => l.id === lesson.id);
+  const prevLesson = index > 0 ? courseModule.lessons[index - 1] : null;
+  const nextLesson = index < courseModule.lessons.length - 1 ? courseModule.lessons[index + 1] : null;
+  const isLastLesson = index === courseModule.lessons.length - 1;
+  const theme = MODULE_THEME[courseModule.examPart];
 
   return (
     <Container className="py-12">
       <div className="mx-auto max-w-3xl">
         <Link
-          href={`/courses/${module.slug}`}
-          className="text-sm font-medium text-brand-600 hover:text-brand-700"
+          href={`/courses/${courseModule.slug}`}
+          className={`text-sm font-medium ${theme.text} hover:opacity-80`}
         >
-          &larr; {module.title}
+          &larr; {courseModule.title}
         </Link>
 
         <div className="mt-4 flex items-center gap-3">
-          <Badge>
-            Lesson {index + 1} of {module.lessons.length}
-          </Badge>
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${theme.bgTint} ${theme.text} ${theme.ring}`}>
+            Lesson {index + 1} of {courseModule.lessons.length}
+          </span>
           <span className="flex items-center gap-1 text-xs text-slate-400">
             <Clock className="h-3.5 w-3.5" /> {lesson.minutes} min read
           </span>
@@ -69,8 +70,8 @@ export default async function LessonPage({
           <div>
             {prevLesson ? (
               <Link
-                href={`/courses/${module.slug}/${prevLesson.slug}`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+                href={`/courses/${courseModule.slug}/${prevLesson.slug}`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:opacity-80"
               >
                 <ArrowLeft className="h-4 w-4" /> {prevLesson.title}
               </Link>
@@ -80,9 +81,9 @@ export default async function LessonPage({
           </div>
 
           {session?.user?.id ? (
-            <LessonComplete lessonId={lesson.id} initialCompleted={progress?.completed ?? false} />
+            <LessonComplete lessonId={lesson.id} initialCompleted={progress?.completed ?? false} accentColor={theme.hex} />
           ) : (
-            <Link href="/login" className="text-sm font-medium text-brand-600 hover:text-brand-700">
+            <Link href="/login" className={`text-sm font-medium ${theme.text} hover:opacity-80`}>
               Log in to track progress &rarr;
             </Link>
           )}
@@ -90,15 +91,15 @@ export default async function LessonPage({
           <div className="text-right">
             {nextLesson ? (
               <Link
-                href={`/courses/${module.slug}/${nextLesson.slug}`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+                href={`/courses/${courseModule.slug}/${nextLesson.slug}`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:opacity-80"
               >
                 {nextLesson.title} <ArrowRight className="h-4 w-4" />
               </Link>
-            ) : isLastLesson && module.quizzes[0] ? (
+            ) : isLastLesson && courseModule.quizzes[0] ? (
               <Link
-                href={`/courses/${module.slug}/quiz`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700"
+                href={`/courses/${courseModule.slug}/quiz`}
+                className={`inline-flex items-center gap-1.5 text-sm font-medium ${theme.text} hover:opacity-80`}
               >
                 Take the module quiz <ClipboardCheck className="h-4 w-4" />
               </Link>

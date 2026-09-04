@@ -12,16 +12,20 @@ A free, AI-supported self-study platform to help family-migrants prepare for the
 - **NextAuth v5** (Credentials provider) — email/password auth with bcrypt hashing, JWT sessions
 - **Recharts** — dashboard data visualization
 - **react-markdown** — lesson content rendering
+- **canvas-confetti** — celebration effects
+- **Web Speech API** — Dutch text-to-speech for vocabulary flashcards (browser-native, no API key)
 - OpenAI-compatible API (optional) — live AI assistant, with a built-in offline fallback
 
 ## Features
 
-- **Landing page** explaining the problem, audience, and exam structure
+- **Landing page** with real photography, a per-module color system, and a hero mockup of the progress dashboard
 - **Auth** — register / login / logout, protected routes via middleware
-- **5 course modules** mapped to the exam: Reading, Writing, Listening, Speaking, Knowledge of Dutch Society (KNM) — each with real lessons and a scored quiz
-- **Lesson viewer** with markdown content, mark-as-complete, prev/next navigation
-- **Quiz engine** — per-question instant feedback, server-side grading, scored attempts
-- **Progress dashboard** — completion stats, per-module bars, quiz score trend chart, recent attempts
+- **5 course modules** mapped to the exam — Reading (indigo), Writing (purple), Listening (rose), Speaking (orange), Knowledge of Dutch Society (emerald) — each with its own accent color and thematic photo
+- **25 lessons** (5 per module) with real B1-level content, plus **50 vocabulary flashcards** (10 per module) with flip animation and Dutch text-to-speech playback
+- **Quiz engine** — 36 questions across 5 quizzes, per-question instant feedback, server-side grading, scored attempts
+- **Progress dashboard** — circular progress ring, day-streak tracker, per-module bars, quiz score trend chart, recent attempts
+- **Achievement badges** — 6 unlockable achievements (First Step, Quiz Whiz, Module Master, All-Rounder, On Fire, Graduate) computed from live progress data
+- **Celebratory micro-interactions** — confetti on lesson completion and quiz passes, a bigger burst when a module is fully mastered
 - **AI study assistant** — chat UI backed by an LLM (if `OPENAI_API_KEY` is set) or a rule-based offline fallback for common NT2/inburgering questions, with a visible "study aid, not an official source" disclaimer
 
 ## Getting started
@@ -55,14 +59,23 @@ OPENAI_API_KEY=""   # optional — leave empty to use the offline assistant fall
 
 ```
 prisma/schema.prisma       Data model: User, Module, Lesson, Quiz, Question, Option,
-                           LessonProgress, QuizAttempt, ChatMessage
-prisma/seed.ts             Course content (5 modules, 15 lessons, 26 quiz questions)
+                           LessonProgress, QuizAttempt, VocabularyItem, ChatMessage
+prisma/seed.ts             Course content (5 modules, 25 lessons, 50 vocab items, 36 quiz questions)
 src/lib/auth.ts            NextAuth config (credentials provider, JWT)
 src/lib/data.ts            Progress-aggregation queries used by dashboard/courses pages
 src/lib/assistant.ts       System prompt, OpenAI call, offline fallback replies
+src/lib/moduleTheme.ts     Per-module color system (gradients, tints) + hero image map
+src/lib/badges.ts          Achievement definitions + unlock logic
+src/lib/streak.ts          Day-streak tracking (called from lesson-complete / quiz-submit)
+src/lib/confetti.ts        Celebration effect helpers (canvas-confetti wrappers)
 src/app/                   Routes (landing, login/register, courses, dashboard, assistant)
 src/components/            UI building blocks, grouped by feature area
+public/images/             Sourced Unsplash photography (see credits below)
 ```
+
+## Image credits
+
+Photos in `public/images/` are sourced from Unsplash (free to use under the Unsplash License, no attribution required, but credited here for transparency): Amsterdam canal houses, a tulip field windmill, and thematic shots for each module (reading, writing, headphones, conversation, city bikes).
 
 ## Notes on scope
 

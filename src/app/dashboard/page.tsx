@@ -1,20 +1,39 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { getOverallProgress } from "@/lib/data";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
+import { CircularProgress } from "@/components/ui/CircularProgress";
 import { ModuleIcon } from "@/components/courses/ModuleIcon";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
+import { BadgeShelf } from "@/components/dashboard/BadgeShelf";
 import { BookOpenCheck, ClipboardCheck, Flame, ArrowRight } from "lucide-react";
+import { MODULE_THEME } from "@/lib/moduleTheme";
+import { BADGE_DEFS, computeEarnedBadges } from "@/lib/badges";
 
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user.id;
-  const data = await getOverallProgress(userId);
+  const [data, user, allAttempts] = await Promise.all([
+    getOverallProgress(userId),
+    prisma.user.findUnique({ where: { id: userId }, select: { currentStreak: true, longestStreak: true } }),
+    prisma.quizAttempt.findMany({ where: { userId }, select: { score: true, total: true } }),
+  ]);
 
   const nextModule = data.modules.find((m) => m.percent < 100);
+  const currentStreak = user?.currentStreak ?? 0;
+  const hasPerfectQuiz = allAttempts.some((a) => a.total > 0 && a.score === a.total);
+
+  const earnedBadges = computeEarnedBadges({
+    completedLessons: data.completedLessons,
+    hasPerfectQuiz,
+    modules: data.modules,
+    currentStreak,
+    overallPercent: data.overallPercent,
+  });
 
   return (
     <Container className="py-12">
@@ -33,7 +52,7 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-4">
         <StatCard
           icon={<BookOpenCheck className="h-5 w-5" />}
           label="Lessons completed"
@@ -46,34 +65,44 @@ export default async function DashboardPage() {
         />
         <StatCard
           icon={<Flame className="h-5 w-5" />}
-          label="Overall progress"
-          value={`${data.overallPercent}%`}
+          label="Day streak"
+          value={`${currentStreak}`}
           accent
         />
+        <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 card-shadow">
+          <CircularProgress value={data.overallPercent} size={64} strokeWidth={6} color="#1f6469" />
+          <div>
+            <p className="text-sm font-medium text-ink-900">Overall progress</p>
+            <p className="text-xs text-slate-500">across all 5 modules</p>
+          </div>
+        </div>
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-6 card-shadow">
           <h2 className="font-semibold text-ink-900">Progress by module</h2>
           <div className="mt-6 space-y-5">
-            {data.modules.map((m) => (
-              <Link
-                key={m.id}
-                href={`/courses/${m.slug}`}
-                className="group flex items-center gap-4 rounded-xl p-2 -m-2 hover:bg-slate-50"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                  <ModuleIcon name={m.icon} className="h-[18px] w-[18px]" />
-                </span>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-ink-900">{m.title}</span>
-                    <span className="text-slate-400">{m.percent}%</span>
+            {data.modules.map((m) => {
+              const theme = MODULE_THEME[m.examPart];
+              return (
+                <Link
+                  key={m.id}
+                  href={`/courses/${m.slug}`}
+                  className="group flex items-center gap-4 rounded-xl p-2 -m-2 hover:bg-slate-50"
+                >
+                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${theme.bgTint} ${theme.text}`}>
+                    <ModuleIcon name={m.icon} className="h-[18px] w-[18px]" />
+                  </span>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium text-ink-900">{m.title}</span>
+                      <span className="text-slate-400">{m.percent}%</span>
+                    </div>
+                    <ProgressBar value={m.percent} className="mt-2" barClassName={theme.progressBar} />
                   </div>
-                  <ProgressBar value={m.percent} className="mt-2" />
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -90,6 +119,16 @@ export default async function DashboardPage() {
                 module: a.quiz.module.title,
               }))}
           />
+        </div>
+      </div>
+
+      <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 card-shadow">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-ink-900">Achievements</h2>
+          <span className="text-xs text-slate-400">{earnedBadges.size}/{BADGE_DEFS.length} unlocked</span>
+        </div>
+        <div className="mt-5">
+          <BadgeShelf badges={BADGE_DEFS} earned={earnedBadges} />
         </div>
       </div>
 

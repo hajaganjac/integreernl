@@ -53,23 +53,23 @@ export async function getModulesWithProgress(userId: string | undefined) {
 }
 
 export async function getModuleBySlug(slug: string, userId: string | undefined) {
-  const module = await prisma.module.findUnique({
+  const courseModule = await prisma.module.findUnique({
     where: { slug },
     include: {
       lessons: { orderBy: { order: "asc" } },
       quizzes: { include: { questions: { include: { options: true }, orderBy: { order: "asc" } } } },
     },
   });
-  if (!module) return null;
+  if (!courseModule) return null;
 
   const progress = userId
     ? await prisma.lessonProgress.findMany({
-        where: { userId, lessonId: { in: module.lessons.map((l) => l.id) } },
+        where: { userId, lessonId: { in: courseModule.lessons.map((l) => l.id) } },
       })
     : [];
   const completedLessonIds = new Set(progress.filter((p) => p.completed).map((p) => p.lessonId));
 
-  return { module, completedLessonIds };
+  return { module: courseModule, completedLessonIds };
 }
 
 export async function getOverallProgress(userId: string) {

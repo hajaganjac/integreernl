@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { recordActivity } from "@/lib/streak";
 
 const schema = z.object({
   quizId: z.string(),
@@ -23,7 +24,10 @@ export async function POST(request: Request) {
 
   const quiz = await prisma.quiz.findUnique({
     where: { id: quizId },
-    include: { questions: { include: { options: true } } },
+    include: {
+      questions: { include: { options: true } },
+      module: { include: { lessons: true } },
+    },
   });
   if (!quiz) {
     return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
@@ -50,5 +54,21 @@ export async function POST(request: Request) {
     },
   });
 
-  return NextResponse.json({ id: attempt.id, score, total });
+  await recordActivity(session.user.id);
+
+  const passed = total > 0 && score / total >= 0.7;
+  let moduleComplete = false;
+
+  if (passed) {
+    const completedLessons = await prisma.lessonProgress.count({
+      where: {
+        userId: session.user.id,
+        completed: true,
+        lessonId: { in: quiz.module.lessons.map((l) => l.id) },
+      },
+    });
+    moduleComplete = completedLessons === quiz.module.lessons.length;
+  }
+
+  return NextResponse.json({ id: attempt.id, score, total, moduleComplete });
 }

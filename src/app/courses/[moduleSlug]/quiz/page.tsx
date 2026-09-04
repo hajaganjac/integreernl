@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Container } from "@/components/ui/Container";
-import { Badge } from "@/components/ui/Badge";
 import { QuizEngine } from "@/components/courses/QuizEngine";
+import { MODULE_THEME } from "@/lib/moduleTheme";
 
 export default async function QuizPage({
   params,
@@ -17,7 +17,7 @@ export default async function QuizPage({
     redirect(`/login?callbackUrl=/courses/${moduleSlug}/quiz`);
   }
 
-  const module = await prisma.module.findUnique({
+  const courseModule = await prisma.module.findUnique({
     where: { slug: moduleSlug },
     include: {
       quizzes: {
@@ -30,9 +30,10 @@ export default async function QuizPage({
       },
     },
   });
-  if (!module || !module.quizzes[0]) notFound();
+  if (!courseModule || !courseModule.quizzes[0]) notFound();
 
-  const quiz = module.quizzes[0];
+  const quiz = courseModule.quizzes[0];
+  const theme = MODULE_THEME[courseModule.examPart];
 
   // Strip isCorrect before sending to the client — grading happens server-side.
   const safeQuestions = quiz.questions.map((q) => ({
@@ -44,12 +45,14 @@ export default async function QuizPage({
   return (
     <Container className="py-12">
       <div className="mx-auto max-w-2xl">
-        <Link href={`/courses/${module.slug}`} className="text-sm font-medium text-brand-600 hover:text-brand-700">
-          &larr; {module.title}
+        <Link href={`/courses/${courseModule.slug}`} className={`text-sm font-medium ${theme.text} hover:opacity-80`}>
+          &larr; {courseModule.title}
         </Link>
 
         <div className="mt-4">
-          <Badge color="accent">Quiz</Badge>
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${theme.bgTint} ${theme.text} ${theme.ring}`}>
+            Quiz
+          </span>
           <h1 className="mt-3 text-3xl font-semibold text-ink-900">{quiz.title}</h1>
           <p className="mt-2 text-slate-500">
             {safeQuestions.length} questions &middot; answer each one to see instant feedback.
@@ -57,7 +60,13 @@ export default async function QuizPage({
         </div>
 
         <div className="mt-8">
-          <QuizEngine quizId={quiz.id} moduleSlug={module.slug} questions={safeQuestions} />
+          <QuizEngine
+            quizId={quiz.id}
+            moduleSlug={courseModule.slug}
+            questions={safeQuestions}
+            theme={{ progressBar: theme.progressBar, bgTint: theme.bgTint, text: theme.text, border: theme.border }}
+            themeHex={theme.hex}
+          />
         </div>
       </div>
     </Container>

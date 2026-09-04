@@ -21,13 +21,16 @@ enum QuestionType {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  passwordHash  String
-  goalDate      DateTime? // self-reported inburgering deadline
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  passwordHash   String
+  goalDate       DateTime? // self-reported inburgering deadline
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActiveDate DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   progress      LessonProgress[]
   attempts      QuizAttempt[]
@@ -46,6 +49,7 @@ model Module {
 
   lessons     Lesson[]
   quizzes     Quiz[]
+  vocabulary  VocabularyItem[]
 }
 
 model Lesson {
@@ -124,6 +128,18 @@ model QuizAttempt {
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model VocabularyItem {
+  id        String @id @default(cuid())
+  moduleId  String
+  dutch     String
+  english   String
+  exampleNl String @default("")
+  exampleEn String @default("")
+  order     Int
+
+  module    Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 }
 
 model ChatMessage {
