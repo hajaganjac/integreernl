@@ -1,0 +1,83 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  --color-brand-50: #eef7f7;
+  --color-brand-100: #d3ebec;
+  --color-brand-200: #a8d7d9;
+  --color-brand-300: #74bcc0;
+  --color-brand-400: #429aa0;
+  --color-brand-500: #297d84;
+  --color-brand-600: #1f6469;
+  --color-brand-700: #1c5054;
+  --color-brand-800: #1a4145;
+  --color-brand-900: #0f2b2e;
+  --color-brand-950: #081a1c;
+
+  --color-ink-900: #0b1f2a;
+  --color-ink-700: #1e3a4d;
+
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.10);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-brand-50: var(--color-brand-50);
+  --color-brand-100: var(--color-brand-100);
+  --color-brand-200: var(--color-brand-200);
+  --color-brand-300: var(--color-brand-300);
+  --color-brand-400: var(--color-brand-400);
+  --color-brand-500: var(--color-brand-500);
+  --color-brand-600: var(--color-brand-600);
+  --color-brand-700: var(--color-brand-700);
+  --color-brand-800: var(--color-brand-800);
+  --color-brand-900: var(--color-brand-900);
+  --color-brand-950: var(--color-brand-950);
+
+  --color-ink-900: var(--color-ink-900);
+  --color-ink-700: var(--color-ink-700);
+
+  --color-accent-400: var(--color-accent-400);
+  --color-accent-500: var(--color-accent-500);
+  --color-accent-600: var(--color-accent-600);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+.soft-shadow {
+  box-shadow: var(--shadow-soft);
+}
+
+/* subtle grid backdrop for hero sections */
+.grid-fade {
+  background-image:
+    linear-gradient(to bottom, rgba(248,250,252,0) 0%, var(--background) 100%),
+    linear-gradient(rgba(15, 100, 105, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 100, 105, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+::selection {
+  background: var(--color-accent-400);
+  color: white;
+}

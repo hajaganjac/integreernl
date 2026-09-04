@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ExamPart {
+  READING
+  WRITING
+  LISTENING
+  SPEAKING
+  KNM
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  goalDate      DateTime? // self-reported inburgering deadline
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  progress      LessonProgress[]
+  attempts      QuizAttempt[]
+  chatMessages  ChatMessage[]
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  examPart    ExamPart
+  title       String
+  description String
+  order       Int
+  icon        String   @default("BookOpen")
+  color       String   @default("blue")
+
+  lessons     Lesson[]
+  quizzes     Quiz[]
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  slug      String
+  moduleId  String
+  title     String
+  summary   String
+  content   String   // markdown
+  order     Int
+  minutes   Int      @default(10)
+
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress  LessonProgress[]
+
+  @@unique([moduleId, slug])
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Quiz {
+  id        String     @id @default(cuid())
+  slug      String
+  moduleId  String
+  title     String
+  order     Int
+
+  module    Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  QuizAttempt[]
+
+  @@unique([moduleId, slug])
+}
+
+model Question {
+  id            String       @id @default(cuid())
+  quizId        String
+  prompt        String
+  explanation   String       @default("")
+  type          QuestionType @default(MULTIPLE_CHOICE)
+  order         Int
+
+  quiz          Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options       Option[]
+}
+
+model Option {
+  id          String   @id @default(cuid())
+  questionId  String
+  label       String
+  isCorrect   Boolean  @default(false)
+  order       Int
+
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  score     Int
+  total     Int
+  answers   String   // JSON blob: { questionId: optionId }
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
