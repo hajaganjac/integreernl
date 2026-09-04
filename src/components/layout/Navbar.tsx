@@ -3,7 +3,7 @@ import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { MobileNav } from "@/components/layout/MobileNav";
-import { GraduationCap } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 const NAV_LINKS = [
   { href: "/courses", label: "Courses" },
@@ -17,13 +17,8 @@ export async function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-ink-900">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white">
-            <GraduationCap className="h-5 w-5" />
-          </span>
-          <span className="text-lg tracking-tight">
-            Integreer<span className="text-brand-600">NL</span>
-          </span>
+        <Link href="/" className="font-semibold text-ink-900">
+          <Logo />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">

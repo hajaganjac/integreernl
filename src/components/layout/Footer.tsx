@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { GraduationCap } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 export function Footer() {
   return (
@@ -8,14 +8,7 @@ export function Footer() {
       <Container className="py-12">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2 font-semibold text-ink-900">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
-                <GraduationCap className="h-4 w-4" />
-              </span>
-              <span>
-                Integreer<span className="text-brand-600">NL</span>
-              </span>
-            </div>
+            <Logo withTagline size={30} />
             <p className="mt-4 max-w-sm text-sm leading-6 text-slate-500">
               A free, independent study platform for the Dutch civic integration exam
               (inburgering). Built for family-migrants who fund their own path to B1 —
