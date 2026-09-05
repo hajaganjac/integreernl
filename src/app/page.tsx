@@ -76,23 +76,6 @@ const TESTIMONIALS = [
   },
 ];
 
-const COMPARISON = {
-  columns: ["Municipal course", "Private course", "IntegreerNL"],
-  note: [
-    "Funded by your gemeente — only if you hold asylum status",
-    "What most family-migrants are left with: self-paid or a DUO loan",
-    "This platform",
-  ],
-  rows: [
-    { label: "Who it's for", values: ["Asylum status holders", "Anyone who can pay", "Anyone, free"] },
-    { label: "Cost to you", values: ["Free", "Paid or DUO loan", "Free"] },
-    { label: "Study at your own pace", values: [false, false, true] },
-    { label: "Available evenings & weekends", values: [false, false, true] },
-    { label: "Instant answers when stuck", values: [false, false, true] },
-    { label: "Progress tracking built in", values: [false, false, true] },
-  ],
-};
-
 const ROADMAP = {
   live: [
     "All 5 exam parts, 25 lessons",
@@ -124,7 +107,7 @@ const FAQS = [
   },
   {
     q: "What do you do with my data?",
-    a: "We store the minimum needed to run your account: your name, email, a securely hashed password, and your study progress. We do not sell your data, we do not share it with advertisers, and we do not pass it to any government body. Your messages to the AI assistant are stored so your conversation history works. You can ask for your account and all its data to be deleted at any time.",
+    a: "We store the minimum needed to run your account: your name, email, a securely hashed password, and your study progress. We do not sell your data, we do not share it with advertisers, and we do not pass it to any government body. Your messages to the AI assistant are stored so your conversation history works. If you want your account and all its data removed, email us and we'll delete it — there's no self-service delete button yet.",
   },
   {
     q: "Who is this platform for?",
@@ -236,23 +219,6 @@ function StatsSection() {
 
 /* -------------------------- Problem ------------------------------- */
 
-/** Renders a comparison cell: a tick, a dash, or literal text.
- *  Icons carry an sr-only label so the meaning isn't colour/shape-only. */
-function ComparisonValue({ value }: { value: string | boolean }) {
-  if (typeof value !== "boolean") return <>{value}</>;
-  return value ? (
-    <>
-      <Check className="text-brand-600" aria-hidden="true" style={{ width: 18, height: 18 }} />
-      <span className="sr-only">Yes</span>
-    </>
-  ) : (
-    <>
-      <Minus className="text-ink-300" aria-hidden="true" style={{ width: 18, height: 18 }} />
-      <span className="sr-only">No</span>
-    </>
-  );
-}
-
 function ProblemSection() {
   return (
     <section className="border-b border-ink-100">
@@ -275,95 +241,8 @@ function ProblemSection() {
           </p>
         </FadeInUp>
 
-        {/* Mobile: stacked cards. A horizontally scrolling table pushed the
-            IntegreerNL column — the whole point of the comparison — off
-            screen with no scroll affordance. Same data, no duplication. */}
-        <FadeInUp className="mt-10 space-y-4 sm:hidden">
-          {COMPARISON.columns.map((col, ci) => {
-            const isUs = ci === 2;
-            return (
-              <div
-                key={col}
-                className={`rounded-lg border p-5 ${
-                  isUs ? "border-accent-200 bg-accent-50/60" : "border-ink-100 bg-canvas-raised"
-                }`}
-              >
-                <h3
-                  className={`font-display text-base font-bold ${
-                    isUs ? "text-accent-800" : "text-ink-900"
-                  }`}
-                >
-                  {col}
-                </h3>
-                <p className="mt-1 text-2xs text-body-subtle">{COMPARISON.note[ci]}</p>
-                <dl className="mt-4 space-y-2">
-                  {COMPARISON.rows.map((row) => (
-                    <div key={row.label} className="flex items-center justify-between gap-4">
-                      <dt className="text-sm text-body-muted">{row.label}</dt>
-                      <dd
-                        className={`shrink-0 text-sm font-semibold ${
-                          isUs ? "text-accent-900" : "text-body"
-                        }`}
-                      >
-                        <ComparisonValue value={row.values[ci]} />
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            );
-          })}
-        </FadeInUp>
-
-        <FadeInUp className="mt-12 hidden overflow-x-auto sm:block">
-          <table className="w-full min-w-[40rem] border-collapse text-left">
-            <caption className="sr-only">
-              Comparison of the municipal course, a private course, and IntegreerNL
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col" className="w-[28%] pb-4" />
-                {COMPARISON.columns.map((c, i) => (
-                  <th
-                    key={c}
-                    scope="col"
-                    className={`pb-4 align-bottom ${i === 2 ? "text-accent-800" : "text-ink-900"}`}
-                  >
-                    <span className="block font-display text-base font-bold">{c}</span>
-                    <span className="mt-1 block text-2xs font-normal text-body-subtle">
-                      {COMPARISON.note[i]}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON.rows.map((row) => (
-                <tr key={row.label} className="border-t border-ink-100">
-                  <th
-                    scope="row"
-                    className="py-3.5 pr-4 text-sm font-medium text-body align-middle"
-                  >
-                    {row.label}
-                  </th>
-                  {row.values.map((v, i) => (
-                    <td
-                      key={i}
-                      className={`py-3.5 text-sm align-middle ${
-                        i === 2 ? "bg-accent-50/60 font-semibold text-accent-900" : "text-body-muted"
-                      }`}
-                    >
-                      <ComparisonValue value={v} />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </FadeInUp>
-
-        <FadeInUp>
-          <p className="mt-6 text-xs text-body-subtle">
+        <FadeInUp className="mx-auto mt-6 max-w-2xl text-center">
+          <p className="text-xs text-body-subtle">
             Exam fees are charged per part and course costs are set by private providers.
             For current official figures see{" "}
             <a
