@@ -37,7 +37,7 @@ export function CircularProgress({
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-lg font-semibold text-ink-900">{Math.round(clamped)}%</span>
-        {label && <span className="text-[10px] text-slate-400">{label}</span>}
+        {label && <span className="text-[10px] text-body-subtle">{label}</span>}
       </div>
     </div>
   );

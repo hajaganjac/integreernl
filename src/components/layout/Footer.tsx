@@ -4,12 +4,12 @@ import { Logo } from "@/components/ui/Logo";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-slate-200 bg-white">
+    <footer className="mt-24 border-t border-ink-100 bg-canvas-raised">
       <Container className="py-12">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <Logo withTagline size={30} />
-            <p className="mt-4 max-w-sm text-sm leading-6 text-slate-500">
+            <p className="mt-4 max-w-sm text-sm leading-6 text-body-muted">
               A free, independent study platform for the Dutch civic integration exam
               (inburgering). Built for family-migrants who fund their own path to B1 —
               structured lessons, adaptive quizzes and an AI study buddy, at no cost.
@@ -18,7 +18,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-ink-900">Study</h3>
-            <ul className="mt-4 space-y-3 text-sm text-slate-500">
+            <ul className="mt-4 space-y-3 text-sm text-body-muted">
               <li><Link href="/courses" className="hover:text-brand-600">All modules</Link></li>
               <li><Link href="/assistant" className="hover:text-brand-600">AI assistant</Link></li>
               <li><Link href="/dashboard" className="hover:text-brand-600">My progress</Link></li>
@@ -27,7 +27,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-ink-900">About</h3>
-            <ul className="mt-4 space-y-3 text-sm text-slate-500">
+            <ul className="mt-4 space-y-3 text-sm text-body-muted">
               <li><Link href="/#exam" className="hover:text-brand-600">The exam, explained</Link></li>
               <li><Link href="/#faq" className="hover:text-brand-600">FAQ</Link></li>
               <li>
@@ -44,7 +44,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-slate-100 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center">
+        <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-ink-100 pt-6 text-xs text-body-subtle sm:flex-row sm:items-center">
           <p>&copy; {new Date().getFullYear()} IntegreerNL. A student research project, not an official government service.</p>
           <p>Built with care in Eindhoven.</p>
         </div>

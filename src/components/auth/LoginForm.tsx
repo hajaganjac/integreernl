@@ -25,16 +25,20 @@ export function LoginForm() {
       redirect: false,
     });
 
-    setLoading(false);
-
     if (res?.error) {
+      setLoading(false);
       setError("Incorrect email or password. Please try again.");
       return;
     }
 
+    // refresh() BEFORE push(). The App Router prefetches the protected nav
+    // links while logged out and caches middleware's redirect back to
+    // /login; pushing first replays that stale entry and bounces the user
+    // back despite a valid session. Refreshing first invalidates the cache
+    // so the push is resolved against the new session cookie.
     const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-    router.push(callbackUrl);
     router.refresh();
+    router.push(callbackUrl);
   }
 
   return (
@@ -47,8 +51,8 @@ export function LoginForm() {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink-900">Email</span>
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
-          <Mail className="h-4 w-4 text-slate-400" />
+        <div className="flex items-center gap-2 rounded-xl border border-ink-100 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+          <Mail className="h-4 w-4 text-body-subtle" />
           <input
             type="email"
             required
@@ -63,8 +67,8 @@ export function LoginForm() {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink-900">Password</span>
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
-          <Lock className="h-4 w-4 text-slate-400" />
+        <div className="flex items-center gap-2 rounded-xl border border-ink-100 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+          <Lock className="h-4 w-4 text-body-subtle" />
           <input
             type="password"
             required
@@ -82,7 +86,7 @@ export function LoginForm() {
         {loading ? "Signing in..." : "Log in"}
       </Button>
 
-      <p className="text-center text-xs text-slate-400">
+      <p className="text-center text-xs text-body-subtle">
         Demo tip: register a free account to try the full course and AI assistant.
       </p>
     </form>

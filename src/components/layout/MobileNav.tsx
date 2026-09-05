@@ -25,7 +25,7 @@ export function MobileNav({ loggedIn }: { loggedIn: boolean }) {
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 top-16 border-b border-slate-200 bg-white shadow-lg">
+        <div className="absolute left-0 right-0 top-16 border-b border-ink-100 bg-canvas-raised shadow-lg">
           <nav className="flex flex-col p-3">
             {NAV_LINKS.map((link) => (
               <Link
@@ -37,11 +37,11 @@ export function MobileNav({ loggedIn }: { loggedIn: boolean }) {
                 {link.label}
               </Link>
             ))}
-            <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
+            <div className="mt-2 flex flex-col gap-2 border-t border-ink-100 pt-3">
               {loggedIn ? (
                 <button
                   onClick={() => signOutAction()}
-                  className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-ink-700 text-left"
+                  className="rounded-lg border border-ink-100 px-4 py-2.5 text-sm font-medium text-ink-700 text-left"
                 >
                   Sign out
                 </button>

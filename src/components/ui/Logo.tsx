@@ -42,11 +42,13 @@ export function Logo({
         />
       </svg>
       <div className="flex flex-col leading-none">
-        <span className="text-lg font-extrabold tracking-tight text-ink-900">
-          Integreer<span className="text-accent-500">NL</span>
+        {/* accent-700, not the brighter accent-500: at this size the lighter
+            orange only reaches 3.0:1 on the warm canvas, failing WCAG AA. */}
+        <span className="font-display text-lg font-extrabold tracking-tight text-ink-900">
+          Integreer<span className="text-accent-700">NL</span>
         </span>
         {withTagline && (
-          <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-body-subtle">
             Learn Dutch. For free.
           </span>
         )}

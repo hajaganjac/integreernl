@@ -1,83 +1,231 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+/* ============================================================
+   IntegreerNL design tokens — single source of truth.
+   Tailwind v4 is CSS-first: this @theme block replaces what a
+   tailwind.config.ts `theme.extend` would hold in v3. Every
+   component pulls from here; no one-off hex values in JSX.
+   ============================================================ */
+@theme {
+  /* --- Surfaces -------------------------------------------- */
+  /* Warm off-white, never pure #fff (reads cold/clinical). */
+  --color-canvas: #fbf9f6;
+  --color-canvas-raised: #ffffff;
+  --color-canvas-sunken: #f4f0ea;
 
-  --color-brand-50: #eef7f7;
-  --color-brand-100: #d3ebec;
-  --color-brand-200: #a8d7d9;
-  --color-brand-300: #74bcc0;
-  --color-brand-400: #429aa0;
-  --color-brand-500: #297d84;
-  --color-brand-600: #1f6469;
-  --color-brand-700: #1c5054;
-  --color-brand-800: #1a4145;
-  --color-brand-900: #0f2b2e;
-  --color-brand-950: #081a1c;
+  /* --- Navy: headings + dark surfaces ---------------------- */
+  --color-ink-50: #f2f4f8;
+  --color-ink-100: #e2e7f0;
+  --color-ink-200: #c5cede;
+  --color-ink-300: #9aabc4;
+  --color-ink-400: #6b81a5;
+  --color-ink-500: #4a6088;
+  --color-ink-600: #35496c;
+  --color-ink-700: #24375d;
+  --color-ink-800: #1b2a4a; /* brand navy */
+  --color-ink-900: #1b2a4a; /* alias: primary heading colour */
+  --color-ink-950: #0d1526;
 
-  --color-ink-900: #0b1f2a;
-  --color-ink-700: #1e3a4d;
+  /* --- Body text: warm charcoal, not pure black ------------ */
+  /* Both muted tones are verified against the *sunken* surface, which is
+     the darkest background body text sits on — passing there passes
+     everywhere. (axe flagged the previous #6f7587 at 4.04:1.) */
+  --color-body: #1f2430; /* 14.8:1 on canvas */
+  --color-body-muted: #5a6072; /* 5.5:1 on sunken — AA */
+  --color-body-subtle: #656b7d; /* 4.8:1 on sunken — AA */
 
-  --color-accent-400: #fb923c;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
+  /* --- Orange: the one true call-to-action colour ---------- */
+  --color-accent-50: #fef5f1;
+  --color-accent-100: #fde6dc;
+  --color-accent-200: #fbc9b6;
+  --color-accent-300: #f8a385;
+  --color-accent-400: #f4854f;
+  --color-accent-500: #ef6c3a; /* brand orange — accents, icons, highlights */
+  --color-accent-600: #d8551f; /* dark accent — hover, decorative */
+  --color-accent-700: #b84517; /* solid CTA bg: 5.4:1 with white — AA */
+  --color-accent-800: #94370f;
+  --color-accent-900: #7a2f10;
 
-  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.10);
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(15, 23, 42, 0.06);
+  /* --- Teal: secondary accent, success, progress ----------- */
+  --color-brand-50: #f0f7f6;
+  --color-brand-100: #daebe9;
+  --color-brand-200: #b7d8d5;
+  --color-brand-300: #8bbdb9;
+  --color-brand-400: #5b9d99;
+  --color-brand-500: #3d827f;
+  --color-brand-600: #2e6f6e; /* brand teal — 5.5:1 on canvas, AA */
+  --color-brand-700: #275a59;
+  --color-brand-800: #234a49;
+  --color-brand-900: #1f3e3e;
+  --color-brand-950: #0f2322;
+
+  /* --- Type scale ------------------------------------------
+     Paired line-heights: generous (1.6–1.7) at body sizes for
+     long-form legal/exam explanation, tight at display sizes. */
+  --text-2xs: 0.75rem; /* 12 */
+  --text-2xs--line-height: 1.5;
+  --text-xs: 0.8125rem; /* 13 */
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem; /* 14 */
+  --text-sm--line-height: 1.6;
+  --text-base: 1rem; /* 16 */
+  --text-base--line-height: 1.7;
+  --text-lg: 1.125rem; /* 18 */
+  --text-lg--line-height: 1.7;
+  --text-xl: 1.25rem; /* 20 */
+  --text-xl--line-height: 1.5;
+  --text-2xl: 1.5rem; /* 24 */
+  --text-2xl--line-height: 1.35;
+  --text-3xl: 2rem; /* 32 */
+  --text-3xl--line-height: 1.25;
+  --text-4xl: 3rem; /* 48 */
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 4rem; /* 64 */
+  --text-5xl--line-height: 1.05;
+
+  /* --- Radii ----------------------------------------------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* --- Shadows: tinted with navy, never neutral black ------ */
+  --shadow-xs: 0 1px 2px rgba(27, 42, 74, 0.05);
+  --shadow-sm: 0 1px 2px rgba(27, 42, 74, 0.05), 0 2px 8px rgba(27, 42, 74, 0.05);
+  --shadow-md: 0 2px 4px rgba(27, 42, 74, 0.05), 0 8px 24px -6px rgba(27, 42, 74, 0.1);
+  --shadow-lg: 0 4px 8px rgba(27, 42, 74, 0.06), 0 16px 40px -8px rgba(27, 42, 74, 0.14);
+  --shadow-warm: 0 8px 32px -8px rgba(216, 85, 31, 0.28);
+
+  /* --- Easing ---------------------------------------------- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  --color-brand-50: var(--color-brand-50);
-  --color-brand-100: var(--color-brand-100);
-  --color-brand-200: var(--color-brand-200);
-  --color-brand-300: var(--color-brand-300);
-  --color-brand-400: var(--color-brand-400);
-  --color-brand-500: var(--color-brand-500);
-  --color-brand-600: var(--color-brand-600);
-  --color-brand-700: var(--color-brand-700);
-  --color-brand-800: var(--color-brand-800);
-  --color-brand-900: var(--color-brand-900);
-  --color-brand-950: var(--color-brand-950);
-
-  --color-ink-900: var(--color-ink-900);
-  --color-ink-700: var(--color-ink-700);
-
-  --color-accent-400: var(--color-accent-400);
-  --color-accent-500: var(--color-accent-500);
-  --color-accent-600: var(--color-accent-600);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-poppins);
+  --color-background: var(--color-canvas);
+  --color-foreground: var(--color-body);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+/* ============================================================
+   Base
+   ============================================================ */
+/* These MUST live in @layer base. Unlayered rules beat every cascade
+   layer, so an unlayered `h2 { color }` would silently override Tailwind
+   utilities like `text-white` on headings — producing navy-on-navy text. */
+@layer base {
+  body {
+    background: var(--color-canvas);
+    color: var(--color-body);
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+    color: var(--color-ink-900);
+    letter-spacing: -0.02em;
+  }
+
+  /* Visible focus on every interactive element (WCAG 2.4.7). */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent-600);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 }
 
-.card-shadow {
-  box-shadow: var(--shadow-card);
-}
-
-.soft-shadow {
-  box-shadow: var(--shadow-soft);
-}
-
-/* subtle grid backdrop for hero sections */
-.grid-fade {
-  background-image:
-    linear-gradient(to bottom, rgba(248,250,252,0) 0%, var(--background) 100%),
-    linear-gradient(rgba(15, 100, 105, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 100, 105, 0.06) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
+/* Utility, not base: must be able to sit on top of base heading styles. */
+.font-display {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.02em;
 }
 
 ::selection {
-  background: var(--color-accent-400);
+  background: var(--color-accent-500);
   color: white;
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+.card-shadow {
+  box-shadow: var(--shadow-sm);
+}
+.soft-shadow {
+  box-shadow: var(--shadow-md);
+}
+
+/* Warm gradient-mesh + grain hero backdrop. */
+.hero-canvas {
+  position: relative;
+  background:
+    radial-gradient(60rem 30rem at 12% -10%, rgba(239, 108, 58, 0.1), transparent 60%),
+    radial-gradient(50rem 28rem at 92% 8%, rgba(46, 111, 110, 0.12), transparent 62%),
+    var(--color-canvas);
+}
+.hero-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  /* Fractal-noise grain, inlined so it costs no extra request. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------
+   CSS-only entrance, for ABOVE-THE-FOLD content.
+
+   The Framer primitives are JS-driven, so anything using them stays
+   at opacity:0 until React hydrates. For the hero that made the <h1>
+   the LCP element at ~3.1s. This variant starts as soon as CSS is
+   parsed, so the headline paints almost immediately while keeping the
+   same timing/easing as the JS system. Below-the-fold sections still
+   use the Framer primitives, where hydration cost is irrelevant.
+   ------------------------------------------------------------ */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.enter-up {
+  animation: enter-up 0.5s var(--ease-out-soft) both;
+}
+
+/* Link underline that draws in from the left. */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px;
+  transition: background-size 0.28s var(--ease-out-soft);
+}
+.link-draw:hover {
+  background-size: 100% 1.5px;
+}
+
+/* ============================================================
+   Reduced motion — global, no exceptions.
+   Framer Motion primitives also check this in JS.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

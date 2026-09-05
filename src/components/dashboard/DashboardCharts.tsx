@@ -22,7 +22,7 @@ export function DashboardCharts({
   return (
     <div className="mt-4 flex flex-col gap-8">
       <div>
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Module completion</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-body-subtle">Module completion</p>
         <div className="mt-3 h-48">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={modules} layout="vertical" margin={{ left: 0, right: 16 }}>
@@ -49,7 +49,7 @@ export function DashboardCharts({
 
       {attempts.length > 0 && (
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Quiz score trend</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-body-subtle">Quiz score trend</p>
           <div className="mt-3 h-40">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={attempts} margin={{ left: -20, right: 16, top: 8 }}>

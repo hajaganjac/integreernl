@@ -59,14 +59,14 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
   }
 
   return (
-    <div className="flex h-[32rem] flex-col rounded-2xl border border-slate-200 bg-white card-shadow">
+    <div className="flex h-[32rem] flex-col rounded-2xl border border-ink-100 bg-canvas-raised card-shadow">
       <div ref={scrollRef} className="flex-1 space-y-5 overflow-y-auto p-6">
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
               <Sparkles className="h-6 w-6" />
             </span>
-            <p className="mt-4 max-w-sm text-sm text-slate-500">
+            <p className="mt-4 max-w-sm text-sm text-body-muted">
               Ask a question, or try one of these to get started:
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
@@ -74,7 +74,7 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
                 <button
                   key={s}
                   onClick={() => sendMessage(s)}
-                  className="rounded-full border border-slate-200 px-3.5 py-1.5 text-xs font-medium text-ink-700 hover:border-brand-300 hover:bg-brand-50"
+                  className="rounded-full border border-ink-100 px-3.5 py-1.5 text-xs font-medium text-ink-700 hover:border-brand-300 hover:bg-brand-50"
                 >
                   {s}
                 </button>
@@ -96,10 +96,18 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
             <div
               className={cn(
                 "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-6",
-                m.role === "user" ? "bg-ink-900 text-white" : "bg-slate-50 text-ink-900"
+                m.role === "user" ? "bg-ink-900 text-white" : "bg-canvas-sunken text-body"
               )}
             >
-              <div className="prose prose-sm max-w-none prose-p:my-1 prose-strong:text-inherit prose-headings:text-inherit prose-a:text-brand-300">
+              {/* prose sets its own --tw-prose-body colour, which would
+                  override the bubble's text colour; prose-invert restores
+                  legible contrast on the dark user bubble. */}
+              <div
+                className={cn(
+                  "prose prose-sm max-w-none prose-p:my-1 prose-strong:text-inherit prose-headings:text-inherit",
+                  m.role === "user" && "prose-invert"
+                )}
+              >
                 <ReactMarkdown>{m.content}</ReactMarkdown>
               </div>
             </div>
@@ -111,7 +119,7 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
               <Sparkles className="h-4 w-4" />
             </span>
-            <div className="flex items-center gap-2 rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-slate-400">
+            <div className="flex items-center gap-2 rounded-2xl bg-canvas-sunken px-4 py-2.5 text-sm text-body-subtle">
               <Loader2 className="h-3.5 w-3.5 animate-spin" /> Thinking...
             </div>
           </div>
@@ -123,20 +131,21 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
           e.preventDefault();
           sendMessage(input);
         }}
-        className="flex items-center gap-2 border-t border-slate-100 p-3"
+        className="flex items-center gap-2 border-t border-ink-100 p-3"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about grammar, KNM, or practice a conversation..."
-          className="flex-1 rounded-xl bg-slate-50 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-100"
+          className="flex-1 rounded-xl bg-canvas-sunken px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-100"
         />
         <button
           type="submit"
+          aria-label="Send message"
           disabled={loading || !input.trim()}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white transition-colors hover:bg-brand-700 disabled:opacity-40"
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-4 w-4" aria-hidden="true" />
         </button>
       </form>
     </div>

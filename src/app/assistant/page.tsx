@@ -21,7 +21,7 @@ export default async function AssistantPage() {
       <div className="mx-auto max-w-3xl">
         <Badge color="accent">AI study buddy</Badge>
         <h1 className="mt-3 text-3xl font-semibold text-ink-900">Ask anything about Dutch or the exam</h1>
-        <p className="mt-2 text-slate-500">
+        <p className="mt-2 text-body-muted">
           Practice grammar, ask about a KNM topic, or rehearse a conversation — any time, no appointment needed.
         </p>
 

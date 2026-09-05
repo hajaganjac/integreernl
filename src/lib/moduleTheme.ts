@@ -108,10 +108,3 @@ export const MODULE_THEME: Record<ExamPart, ModuleTheme> = {
   },
 };
 
-export const MODULE_IMAGE: Record<ExamPart, string> = {
-  READING: "/images/module-reading.jpg",
-  WRITING: "/images/module-writing.jpg",
-  LISTENING: "/images/module-listening.jpg",
-  SPEAKING: "/images/module-speaking.jpg",
-  KNM: "/images/module-knm.jpg",
-};

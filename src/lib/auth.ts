@@ -4,6 +4,11 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Auth.js v5 rejects requests with `UntrustedHost` in production unless the
+  // host is explicitly trusted. Vercel is auto-detected, but without this a
+  // `next start` / self-hosted deploy returns /api/auth/error for every
+  // sign-in. Safe here because the app always sits behind a single origin.
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",

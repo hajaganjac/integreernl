@@ -54,15 +54,15 @@ export default async function LessonPage({
           <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${theme.bgTint} ${theme.text} ${theme.ring}`}>
             Lesson {index + 1} of {courseModule.lessons.length}
           </span>
-          <span className="flex items-center gap-1 text-xs text-slate-400">
+          <span className="flex items-center gap-1 text-xs text-body-subtle">
             <Clock className="h-3.5 w-3.5" /> {lesson.minutes} min read
           </span>
         </div>
 
         <h1 className="mt-3 text-3xl font-semibold text-ink-900">{lesson.title}</h1>
-        <p className="mt-2 text-slate-500">{lesson.summary}</p>
+        <p className="mt-2 text-body-muted">{lesson.summary}</p>
 
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 card-shadow">
+        <div className="mt-8 rounded-2xl border border-ink-100 bg-canvas-raised p-8 card-shadow">
           <LessonContent content={lesson.content} />
         </div>
 
@@ -71,7 +71,7 @@ export default async function LessonPage({
             {prevLesson ? (
               <Link
                 href={`/courses/${courseModule.slug}/${prevLesson.slug}`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:opacity-80"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-body-muted hover:opacity-80"
               >
                 <ArrowLeft className="h-4 w-4" /> {prevLesson.title}
               </Link>
@@ -92,7 +92,7 @@ export default async function LessonPage({
             {nextLesson ? (
               <Link
                 href={`/courses/${courseModule.slug}/${nextLesson.slug}`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:opacity-80"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-body-muted hover:opacity-80"
               >
                 {nextLesson.title} <ArrowRight className="h-4 w-4" />
               </Link>

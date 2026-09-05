@@ -31,7 +31,7 @@ export default async function VocabularyPage({
         <div className="mt-4">
           <Badge color="accent">Vocabulary</Badge>
           <h1 className="mt-3 text-3xl font-semibold text-ink-900">Flashcards: {courseModule.title}</h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-body-muted">
             Flip each card, listen to the pronunciation, and mark whether you knew it.
           </p>
         </div>

@@ -13,7 +13,7 @@ export function ProgressBar({
 }) {
   const clamped = Math.max(0, Math.min(100, value));
   return (
-    <div className={cn("w-full rounded-full bg-slate-100 h-2 overflow-hidden", trackClassName, className)}>
+    <div className={cn("w-full rounded-full bg-ink-100 h-2 overflow-hidden", trackClassName, className)}>
       <div
         className={cn("h-full rounded-full bg-brand-500 transition-all duration-500 ease-out", barClassName)}
         style={{ width: `${clamped}%` }}

@@ -133,7 +133,7 @@ export function QuizEngine({
     const moduleComplete = passed && result.moduleComplete;
 
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center card-shadow">
+      <div className="rounded-2xl border border-ink-100 bg-canvas-raised p-8 text-center card-shadow">
         <span
           className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${
             passed ? `${theme.bgTint} ${theme.text}` : "bg-orange-50 text-accent-500"
@@ -144,7 +144,7 @@ export function QuizEngine({
         <h2 className="mt-5 text-2xl font-semibold text-ink-900">
           {moduleComplete ? "Module mastered!" : `${result.score} / ${result.total} correct`}
         </h2>
-        <p className="mt-2 text-slate-500">
+        <p className="mt-2 text-body-muted">
           {moduleComplete
             ? `You scored ${result.score}/${result.total} and completed every lesson in this module. Well done!`
             : passed
@@ -168,7 +168,7 @@ export function QuizEngine({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between text-sm text-slate-500">
+      <div className="mb-6 flex items-center justify-between text-sm text-body-muted">
         <span>
           Question {index + 1} of {questions.length}
         </span>
@@ -180,7 +180,7 @@ export function QuizEngine({
         barClassName={theme.progressBar}
       />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 card-shadow">
+      <div className="rounded-2xl border border-ink-100 bg-canvas-raised p-7 card-shadow">
         <h2 className="text-lg font-semibold text-ink-900">{question.prompt}</h2>
 
         <div className="mt-6 flex flex-col gap-3">
@@ -188,14 +188,14 @@ export function QuizEngine({
             const isSelected = answers[question.id] === option.id;
             const isCorrectOption = currentFeedback?.correctOptionId === option.id;
 
-            let stateClasses = "border-slate-200 hover:border-brand-300 hover:bg-brand-50/40";
+            let stateClasses = "border-ink-100 hover:border-brand-300 hover:bg-brand-50/40";
             if (currentFeedback) {
               if (isCorrectOption) {
                 stateClasses = `${theme.border} ${theme.bgTint} ${theme.text}`;
               } else if (isSelected && !currentFeedback.isCorrect) {
                 stateClasses = "border-red-300 bg-red-50 text-red-700";
               } else {
-                stateClasses = "border-slate-200 opacity-60";
+                stateClasses = "border-ink-100 opacity-60";
               }
             }
 
@@ -242,7 +242,7 @@ export function QuizEngine({
       </div>
 
       {!currentFeedback && (
-        <p className="mt-4 text-center text-xs text-slate-400">
+        <p className="mt-4 text-center text-xs text-body-subtle">
           Not sure? A wrong answer here is just practice — pick your best guess.
         </p>
       )}

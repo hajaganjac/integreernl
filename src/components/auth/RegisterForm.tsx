@@ -47,8 +47,11 @@ export function RegisterForm() {
         return;
       }
 
-      router.push("/dashboard");
+      // refresh() before push() — see the note in LoginForm: the client
+      // router caches middleware's logged-out redirect for prefetched
+      // protected routes and would otherwise bounce us back to /login.
       router.refresh();
+      router.push("/dashboard");
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);
@@ -65,8 +68,8 @@ export function RegisterForm() {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink-900">Full name</span>
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
-          <User className="h-4 w-4 text-slate-400" />
+        <div className="flex items-center gap-2 rounded-xl border border-ink-100 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+          <User className="h-4 w-4 text-body-subtle" />
           <input
             type="text"
             required
@@ -81,8 +84,8 @@ export function RegisterForm() {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink-900">Email</span>
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
-          <Mail className="h-4 w-4 text-slate-400" />
+        <div className="flex items-center gap-2 rounded-xl border border-ink-100 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+          <Mail className="h-4 w-4 text-body-subtle" />
           <input
             type="email"
             required
@@ -97,8 +100,8 @@ export function RegisterForm() {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink-900">Password</span>
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
-          <Lock className="h-4 w-4 text-slate-400" />
+        <div className="flex items-center gap-2 rounded-xl border border-ink-100 px-3.5 py-2.5 focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+          <Lock className="h-4 w-4 text-body-subtle" />
           <input
             type="password"
             required
@@ -117,7 +120,7 @@ export function RegisterForm() {
         {loading ? "Creating account..." : "Create free account"}
       </Button>
 
-      <p className="text-center text-xs text-slate-400">
+      <p className="text-center text-xs text-body-subtle">
         By signing up you agree this is a study aid, not official government advice.
       </p>
     </form>

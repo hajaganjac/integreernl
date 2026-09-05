@@ -11,8 +11,10 @@ export function Badge({
 }) {
   const colorClasses = {
     brand: "bg-brand-50 text-brand-700 ring-brand-200",
-    accent: "bg-orange-50 text-accent-600 ring-orange-200",
-    slate: "bg-slate-100 text-slate-600 ring-slate-200",
+    // accent-800 not accent-600: on the pale orange tint the lighter
+    // shade only reaches 3.8:1, short of AA for this text size.
+    accent: "bg-accent-50 text-accent-800 ring-accent-200",
+    slate: "bg-ink-100 text-body-muted ring-ink-200",
   }[color];
 
   return (

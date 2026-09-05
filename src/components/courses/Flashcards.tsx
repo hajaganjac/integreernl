@@ -86,12 +86,12 @@ export function Flashcards({
 
   if (finished) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center card-shadow">
+      <div className="rounded-2xl border border-ink-100 bg-canvas-raised p-8 text-center card-shadow">
         <span className={cn("mx-auto flex h-16 w-16 items-center justify-center rounded-full", theme.bgTint, theme.text)}>
           <Sparkles className="h-7 w-7" />
         </span>
         <h2 className="mt-5 text-2xl font-semibold text-ink-900">Deck complete!</h2>
-        <p className="mt-2 text-slate-500">
+        <p className="mt-2 text-body-muted">
           You knew <span className="font-semibold text-ink-900">{known.length}</span> of {items.length} words.{" "}
           {learning.length > 0 && `${learning.length} could use another pass.`}
         </p>
@@ -114,31 +114,28 @@ export function Flashcards({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between text-sm text-slate-500">
+      <div className="mb-6 flex items-center justify-between text-sm text-body-muted">
         <span>
           Card {index + 1} of {deck.length}
         </span>
-        <button onClick={shuffle} className="inline-flex items-center gap-1.5 font-medium text-slate-400 hover:text-ink-900">
+        <button onClick={shuffle} className="inline-flex items-center gap-1.5 font-medium text-body-subtle hover:text-ink-900">
           <Shuffle className="h-3.5 w-3.5" /> Shuffle
         </button>
       </div>
 
-      <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+      <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
         <div className={cn("h-full rounded-full transition-all duration-300", theme.solid)} style={{ width: `${progress}%` }} />
       </div>
 
+      {/* The card itself is presentational, not a control: it contains the
+          pronunciation button, and nesting focusable elements inside a
+          role="button" is a WCAG failure (axe: nested-interactive).
+          Pointer users can still click anywhere on the card; keyboard and
+          screen-reader users get the explicit "Flip card" button below. */}
       <div className="[perspective:1200px]">
         <div
-          role="button"
-          tabIndex={0}
           onClick={() => setFlipped((f) => !f)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setFlipped((f) => !f);
-            }
-          }}
-          className="relative h-72 w-full cursor-pointer text-left outline-none [transform-style:preserve-3d] transition-transform duration-500"
+          className="relative h-72 w-full cursor-pointer text-left [transform-style:preserve-3d] transition-transform duration-500"
           style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
         >
           {/* Front: Dutch word */}
@@ -153,17 +150,16 @@ export function Flashcards({
             <div className="mt-5" onClick={(e) => e.stopPropagation()}>
               <SpeakButton text={card.dutch} className="text-ink-900" />
             </div>
-            <p className="mt-6 text-xs text-white/60">Tap card to flip</p>
           </div>
 
           {/* Back: English + example */}
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-lg [backface-visibility:hidden]"
+            className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-ink-100 bg-canvas-raised p-8 text-center shadow-lg [backface-visibility:hidden]"
             style={{ transform: "rotateY(180deg)" }}
           >
             <span className={cn("text-xs font-medium uppercase tracking-wide", theme.text)}>English</span>
             <p className="mt-2 text-2xl font-semibold text-ink-900">{card.english}</p>
-            <div className="mt-5 space-y-1 text-sm text-slate-500">
+            <div className="mt-5 space-y-1 text-sm text-body-muted">
               <p className="italic text-ink-700">&ldquo;{card.exampleNl}&rdquo;</p>
               <p>{card.exampleEn}</p>
             </div>
@@ -171,18 +167,26 @@ export function Flashcards({
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-center gap-3">
-        <Button variant="outline" onClick={() => markAndAdvance("learning")}>
-          <RefreshCw className="h-4 w-4" /> Still learning
-        </Button>
-        <Button onClick={() => markAndAdvance("known")}>
-          <ThumbsUp className="h-4 w-4" /> I know this
-        </Button>
+      <div className="mt-5 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setFlipped((f) => !f)}
+          aria-pressed={flipped}
+          className="inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 text-sm font-medium text-body-muted hover:text-ink-900"
+        >
+          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+          {flipped ? "Show the Dutch word" : "Flip card to see the meaning"}
+        </button>
       </div>
 
-      {!flipped && (
-        <p className="mt-4 text-center text-xs text-slate-400">Flip the card to see the meaning before marking it.</p>
-      )}
+      <div className="mt-3 flex items-center justify-center gap-3">
+        <Button variant="outline" onClick={() => markAndAdvance("learning")}>
+          <RefreshCw className="h-4 w-4" aria-hidden="true" /> Still learning
+        </Button>
+        <Button onClick={() => markAndAdvance("known")}>
+          <ThumbsUp className="h-4 w-4" aria-hidden="true" /> I know this
+        </Button>
+      </div>
     </div>
   );
 }

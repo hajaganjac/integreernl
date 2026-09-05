@@ -54,7 +54,7 @@ export default async function QuizPage({
             Quiz
           </span>
           <h1 className="mt-3 text-3xl font-semibold text-ink-900">{quiz.title}</h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-body-muted">
             {safeQuestions.length} questions &middot; answer each one to see instant feedback.
           </p>
         </div>

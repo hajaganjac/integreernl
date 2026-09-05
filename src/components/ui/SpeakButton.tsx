@@ -38,7 +38,7 @@ export function SpeakButton({ text, className }: { text: string; className?: str
       onClick={speak}
       title="Listen to Dutch pronunciation"
       className={cn(
-        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/80 text-current shadow-sm ring-1 ring-inset ring-black/5 transition-transform hover:scale-105 active:scale-95",
+        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-canvas-raised/80 text-current shadow-sm ring-1 ring-inset ring-black/5 transition-transform hover:scale-105 active:scale-95",
         className
       )}
     >

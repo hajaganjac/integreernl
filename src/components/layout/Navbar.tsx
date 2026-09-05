@@ -15,7 +15,7 @@ export async function Navbar() {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-ink-100/70 bg-canvas-raised/80 backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between">
         <Link href="/" className="font-semibold text-ink-900">
           <Logo />
@@ -36,7 +36,7 @@ export async function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {session?.user ? (
             <>
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-body-muted">
                 Hi, <span className="font-medium text-ink-900">{session.user.name?.split(" ")[0]}</span>
               </span>
               <form
