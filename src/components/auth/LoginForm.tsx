@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Mail, Lock, Loader2 } from "lucide-react";
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,14 +30,12 @@ export function LoginForm() {
       return;
     }
 
-    // refresh() BEFORE push(). The App Router prefetches the protected nav
-    // links while logged out and caches middleware's redirect back to
-    // /login; pushing first replays that stale entry and bounces the user
-    // back despite a valid session. Refreshing first invalidates the cache
-    // so the push is resolved against the new session cookie.
+    // A full page load, not router.push(). Two reasons: the header is part
+    // of the layout and would otherwise still show "Log in" after signing
+    // in, and the router caches the logged-out redirect for protected
+    // pages it prefetched earlier.
     const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-    router.refresh();
-    router.push(callbackUrl);
+    window.location.href = callbackUrl;
   }
 
   return (

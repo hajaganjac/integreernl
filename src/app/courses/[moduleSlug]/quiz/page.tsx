@@ -65,7 +65,6 @@ export default async function QuizPage({
             moduleSlug={courseModule.slug}
             questions={safeQuestions}
             theme={{ progressBar: theme.progressBar, bgTint: theme.bgTint, text: theme.text, border: theme.border }}
-            themeHex={theme.hex}
           />
         </div>
       </div>

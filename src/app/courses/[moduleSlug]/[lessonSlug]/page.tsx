@@ -81,7 +81,7 @@ export default async function LessonPage({
           </div>
 
           {session?.user?.id ? (
-            <LessonComplete lessonId={lesson.id} initialCompleted={progress?.completed ?? false} accentColor={theme.hex} />
+            <LessonComplete lessonId={lesson.id} initialCompleted={progress?.completed ?? false} />
           ) : (
             <Link href="/login" className={`text-sm font-medium ${theme.text} hover:opacity-80`}>
               Log in to track progress &rarr;

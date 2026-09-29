@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { ModuleIcon } from "@/components/courses/ModuleIcon";
-import { CheckCircle2, Clock, ArrowRight, ClipboardCheck, Sparkles } from "lucide-react";
+import { CheckCircle2, Clock, ArrowRight, ClipboardCheck } from "lucide-react";
 import { EXAM_PART_META } from "@/lib/utils";
 import { MODULE_THEME } from "@/lib/moduleTheme";
 
@@ -22,15 +22,12 @@ export default async function ModulePage({
 
   const { module, completedLessonIds } = result;
 
-  const [bestAttempt, vocabCount] = await Promise.all([
-    session?.user?.id
-      ? prisma.quizAttempt.findFirst({
-          where: { userId: session.user.id, quiz: { moduleId: module.id } },
-          orderBy: { score: "desc" },
-        })
-      : Promise.resolve(null),
-    prisma.vocabularyItem.count({ where: { moduleId: module.id } }),
-  ]);
+  const bestAttempt = session?.user?.id
+    ? await prisma.quizAttempt.findFirst({
+        where: { userId: session.user.id, quiz: { moduleId: module.id } },
+        orderBy: { score: "desc" },
+      })
+    : null;
 
   const meta = EXAM_PART_META[module.examPart];
   const theme = MODULE_THEME[module.examPart];
@@ -87,22 +84,6 @@ export default async function ModulePage({
               </Link>
             );
           })}
-
-          {vocabCount > 0 && (
-            <Link
-              href={`/courses/${module.slug}/vocabulary`}
-              className={`group flex items-center gap-4 rounded-2xl border-2 border-dashed p-5 transition-colors ${theme.border} ${theme.bgTint} ${theme.borderHover}`}
-            >
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white ${theme.solid}`}>
-                <Sparkles className="h-[18px] w-[18px]" />
-              </span>
-              <div className="flex-1">
-                <h3 className="font-medium text-ink-900">Vocabulary flashcards</h3>
-                <p className="mt-0.5 text-sm text-body-muted">{vocabCount} words &middot; flip, listen, and self-check</p>
-              </div>
-              <ArrowRight className={`h-4 w-4 ${theme.textLight} transition-transform group-hover:translate-x-0.5`} />
-            </Link>
-          )}
 
           {module.quizzes[0] && (
             <Link

@@ -47,11 +47,11 @@ export function RegisterForm() {
         return;
       }
 
-      // refresh() before push() — see the note in LoginForm: the client
-      // router caches middleware's logged-out redirect for prefetched
-      // protected routes and would otherwise bounce us back to /login.
-      router.refresh();
-      router.push("/dashboard");
+      // Full page load, not router.push() — see the note in LoginForm:
+      // the header lives in the layout and would otherwise still show
+      // "Log in" after signing up.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/dashboard";
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);

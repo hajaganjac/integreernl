@@ -1,202 +1,112 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { getOverallProgress } from "@/lib/data";
 import { Container } from "@/components/ui/Container";
-import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
-import { CircularProgress } from "@/components/ui/CircularProgress";
 import { ModuleIcon } from "@/components/courses/ModuleIcon";
-import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
-import { BadgeShelf } from "@/components/dashboard/BadgeShelf";
-import { BookOpenCheck, ClipboardCheck, Flame, ArrowRight } from "lucide-react";
 import { MODULE_THEME } from "@/lib/moduleTheme";
-import { BADGE_DEFS, computeEarnedBadges } from "@/lib/badges";
+import { ArrowRight } from "lucide-react";
 
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user.id;
-  const [data, user, allAttempts] = await Promise.all([
-    getOverallProgress(userId),
-    prisma.user.findUnique({ where: { id: userId }, select: { currentStreak: true, longestStreak: true } }),
-    prisma.quizAttempt.findMany({ where: { userId }, select: { score: true, total: true } }),
-  ]);
+  const data = await getOverallProgress(userId);
 
   const nextModule = data.modules.find((m) => m.percent < 100);
-  const currentStreak = user?.currentStreak ?? 0;
-  const hasPerfectQuiz = allAttempts.some((a) => a.total > 0 && a.score === a.total);
-
-  const earnedBadges = computeEarnedBadges({
-    completedLessons: data.completedLessons,
-    hasPerfectQuiz,
-    modules: data.modules,
-    currentStreak,
-    overallPercent: data.overallPercent,
-  });
 
   return (
     <Container className="py-12">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <Badge>Dashboard</Badge>
-          <h1 className="mt-3 text-3xl font-semibold text-ink-900">
-            Welcome back, {session!.user.name?.split(" ")[0]}
+          <h1 className="font-display text-3xl font-bold text-ink-900">
+            Hello, {session!.user.name?.split(" ")[0]}
           </h1>
-          <p className="mt-1.5 text-body-muted">Here&rsquo;s where your B1 study plan stands today.</p>
+          <p className="mt-1.5 text-body-muted">Here is how far you have come.</p>
         </div>
         {nextModule && (
-          <Button href={`/courses/${nextModule.slug}`} size="lg">
-            Continue {nextModule.title} <ArrowRight className="h-4 w-4" />
+          <Button href={`/courses/${nextModule.slug}`}>
+            Continue {nextModule.title}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         )}
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-4">
+      {/* Three plain numbers */}
+      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
         <StatCard
-          icon={<BookOpenCheck className="h-5 w-5" />}
-          label="Lessons completed"
           value={`${data.completedLessons} / ${data.totalLessons}`}
+          label="Lessons completed"
         />
         <StatCard
-          icon={<ClipboardCheck className="h-5 w-5" />}
-          label="Quizzes passed"
           value={`${data.passedQuizzes} / ${data.totalQuizzes}`}
+          label="Quizzes passed"
         />
-        <StatCard
-          icon={<Flame className="h-5 w-5" />}
-          label="Day streak"
-          value={`${currentStreak}`}
-          accent
-        />
-        <div className="flex items-center gap-4 rounded-2xl border border-ink-100 bg-canvas-raised p-6 card-shadow">
-          <CircularProgress value={data.overallPercent} size={64} strokeWidth={6} color="#1f6469" />
-          <div>
-            <p className="text-sm font-medium text-ink-900">Overall progress</p>
-            <p className="text-xs text-body-muted">across all 5 modules</p>
-          </div>
-        </div>
+        <StatCard value={`${data.overallPercent}%`} label="Overall progress" />
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3 rounded-2xl border border-ink-100 bg-canvas-raised p-6 card-shadow">
-          <h2 className="font-semibold text-ink-900">Progress by module</h2>
-          <div className="mt-6 space-y-5">
-            {data.modules.map((m) => {
-              const theme = MODULE_THEME[m.examPart];
-              return (
-                <Link
-                  key={m.id}
-                  href={`/courses/${m.slug}`}
-                  className="group flex items-center gap-4 rounded-xl p-2 -m-2 hover:bg-canvas-sunken"
+      {/* Per-module progress */}
+      <div className="mt-8 rounded-lg border border-ink-100 bg-canvas-raised p-6">
+        <h2 className="font-display font-semibold text-ink-900">Progress by module</h2>
+        <div className="mt-6 space-y-5">
+          {data.modules.map((m) => {
+            const theme = MODULE_THEME[m.examPart];
+            return (
+              <Link
+                key={m.id}
+                href={`/courses/${m.slug}`}
+                className="flex items-center gap-4 rounded-md p-2 -m-2 hover:bg-canvas-sunken"
+              >
+                <span
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
                 >
-                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${theme.bgTint} ${theme.text}`}>
-                    <ModuleIcon name={m.icon} className="h-[18px] w-[18px]" />
-                  </span>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-ink-900">{m.title}</span>
-                      <span className="text-body-subtle">{m.percent}%</span>
-                    </div>
-                    <ProgressBar value={m.percent} className="mt-2" barClassName={theme.progressBar} />
+                  <ModuleIcon name={m.icon} className="h-[18px] w-[18px]" />
+                </span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-ink-900">{m.title}</span>
+                    <span className="text-body-subtle">{m.percent}%</span>
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="lg:col-span-2 rounded-2xl border border-ink-100 bg-canvas-raised p-6 card-shadow">
-          <h2 className="font-semibold text-ink-900">Study snapshot</h2>
-          <DashboardCharts
-            modules={data.modules.map((m) => ({ name: m.title, percent: m.percent }))}
-            attempts={data.recentAttempts
-              .slice()
-              .reverse()
-              .map((a, i) => ({
-                name: `#${i + 1}`,
-                score: Math.round((a.score / a.total) * 100),
-                module: a.quiz.module.title,
-              }))}
-          />
+                  <ProgressBar value={m.percent} className="mt-2" barClassName={theme.progressBar} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
-      <div className="mt-10 rounded-2xl border border-ink-100 bg-canvas-raised p-6 card-shadow">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-ink-900">Achievements</h2>
-          <span className="text-xs text-body-subtle">{earnedBadges.size}/{BADGE_DEFS.length} unlocked</span>
-        </div>
-        <div className="mt-5">
-          <BadgeShelf badges={BADGE_DEFS} earned={earnedBadges} />
-        </div>
-      </div>
-
-      <div className="mt-10 rounded-2xl border border-ink-100 bg-canvas-raised p-6 card-shadow">
-        <h2 className="font-semibold text-ink-900">Recent quiz attempts</h2>
+      {/* Recent quiz attempts */}
+      <div className="mt-8 rounded-lg border border-ink-100 bg-canvas-raised p-6">
+        <h2 className="font-display font-semibold text-ink-900">Recent quiz attempts</h2>
         {data.recentAttempts.length === 0 ? (
           <p className="mt-4 text-sm text-body-muted">
-            You haven&rsquo;t taken a quiz yet. Finish a module&rsquo;s lessons, then test yourself —
-            it&rsquo;s the fastest way to see what&rsquo;s sticking.
+            You have not taken a quiz yet. Finish a few lessons, then try the module quiz.
           </p>
         ) : (
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-ink-100 text-body-subtle">
-                  <th className="pb-2 font-medium">Module</th>
-                  <th className="pb-2 font-medium">Score</th>
-                  <th className="pb-2 font-medium">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.recentAttempts.map((a) => (
-                  <tr key={a.id} className="border-b border-ink-100 last:border-0">
-                    <td className="py-2.5 text-ink-900">{a.quiz.module.title}</td>
-                    <td className="py-2.5">
-                      <Badge color={a.score / a.total >= 0.7 ? "brand" : "slate"}>
-                        {a.score}/{a.total}
-                      </Badge>
-                    </td>
-                    <td className="py-2.5 text-body-subtle">
-                      {new Date(a.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="mt-4 divide-y divide-ink-100">
+            {data.recentAttempts.map((a) => (
+              <li key={a.id} className="flex items-center justify-between py-2.5 text-sm">
+                <span className="text-ink-900">{a.quiz.module.title}</span>
+                <span className="text-body-muted">
+                  {a.score}/{a.total} ·{" "}
+                  {new Date(a.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </Container>
   );
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
-  accent,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  accent?: boolean;
-}) {
+function StatCard({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-ink-100 bg-canvas-raised p-6 card-shadow">
-      <span
-        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-          accent ? "bg-orange-50 text-accent-500" : "bg-brand-50 text-brand-600"
-        }`}
-      >
-        {icon}
-      </span>
-      <p className="mt-4 text-2xl font-semibold text-ink-900">{value}</p>
+    <div className="rounded-lg border border-ink-100 bg-canvas-raised p-6">
+      <p className="font-display text-3xl font-bold text-ink-900">{value}</p>
       <p className="mt-1 text-sm text-body-muted">{label}</p>
     </div>
   );

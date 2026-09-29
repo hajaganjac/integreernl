@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { CheckCircle2, XCircle, PartyPopper, RotateCcw, ArrowRight, Trophy } from "lucide-react";
-import { fireConfetti, fireBigConfetti } from "@/lib/confetti";
+import { CheckCircle2, XCircle, PartyPopper, RotateCcw, ArrowRight } from "lucide-react";
 
 interface Option {
   id: string;
@@ -44,13 +42,11 @@ export function QuizEngine({
   moduleSlug,
   questions,
   theme = DEFAULT_THEME,
-  themeHex,
 }: {
   quizId: string;
   moduleSlug: string;
   questions: Question[];
   theme?: QuizTheme;
-  themeHex?: string;
 }) {
   const router = useRouter();
   const [index, setIndex] = useState(0);
@@ -58,21 +54,8 @@ export function QuizEngine({
   const [feedback, setFeedback] = useState<Record<string, Feedback>>({});
   const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ score: number; total: number; moduleComplete?: boolean } | null>(null);
-
-  useEffect(() => {
-    if (!result) return;
-    const passed = result.total > 0 && result.score / result.total >= 0.7;
-    if (!passed) return;
-
-    const colors = themeHex ? [themeHex, "#f97316"] : undefined;
-    if (result.moduleComplete) {
-      fireBigConfetti(colors);
-    } else {
-      fireConfetti(colors);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result]);
+  const [result, setResult] = useState<{ score: number; total: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const question = questions[index];
   const isLast = index === questions.length - 1;
@@ -93,7 +76,7 @@ export function QuizEngine({
       const data = await res.json();
       setFeedback((prev) => ({ ...prev, [question.id]: data }));
     } catch {
-      toast.error("Could not check your answer. Please try again.");
+      setError("Could not check your answer. Please try again.");
     } finally {
       setChecking(false);
     }
@@ -108,7 +91,7 @@ export function QuizEngine({
         body: JSON.stringify({ quizId, answers }),
       });
       if (!res.ok) {
-        toast.error("Could not submit your quiz. Please try again.");
+        setError("Could not submit your quiz. Please try again.");
         setSubmitting(false);
         return;
       }
@@ -130,7 +113,6 @@ export function QuizEngine({
   if (result) {
     const percent = Math.round((result.score / result.total) * 100);
     const passed = percent >= 70;
-    const moduleComplete = passed && result.moduleComplete;
 
     return (
       <div className="rounded-2xl border border-ink-100 bg-canvas-raised p-8 text-center card-shadow">
@@ -139,15 +121,13 @@ export function QuizEngine({
             passed ? `${theme.bgTint} ${theme.text}` : "bg-orange-50 text-accent-500"
           }`}
         >
-          {moduleComplete ? <Trophy className="h-7 w-7" /> : <PartyPopper className="h-7 w-7" />}
+          <PartyPopper className="h-7 w-7" aria-hidden="true" />
         </span>
         <h2 className="mt-5 text-2xl font-semibold text-ink-900">
-          {moduleComplete ? "Module mastered!" : `${result.score} / ${result.total} correct`}
+          {result.score} / {result.total} correct
         </h2>
         <p className="mt-2 text-body-muted">
-          {moduleComplete
-            ? `You scored ${result.score}/${result.total} and completed every lesson in this module. Well done!`
-            : passed
+          {passed
             ? "Great work — you've passed this module check."
             : "Keep practicing — aim for 70% or higher to pass this check."}
         </p>
@@ -168,6 +148,15 @@ export function QuizEngine({
 
   return (
     <div>
+      {error && (
+        <p
+          role="alert"
+          className="mb-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-inset ring-red-100"
+        >
+          {error}
+        </p>
+      )}
+
       <div className="mb-6 flex items-center justify-between text-sm text-body-muted">
         <span>
           Question {index + 1} of {questions.length}

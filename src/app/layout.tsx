@@ -3,7 +3,6 @@ import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { ToastProvider } from "@/components/ui/ToastProvider";
 
 /* Poppins for headings/UI — matches the logo wordmark.
    Inter for body: far easier to read fast at paragraph sizes. */
@@ -21,7 +20,7 @@ const inter = Inter({
 });
 
 const SITE_DESCRIPTION =
-  "A free, AI-supported self-study platform to help family-migrants prepare for the Dutch civic integration exam (inburgering) — structured lessons, adaptive quizzes, vocabulary flashcards and an AI study buddy.";
+  "A free self-study platform to help family-migrants prepare for the Dutch civic integration exam (inburgering) — structured lessons, quizzes and progress tracking.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://integreernl.vercel.app"),
@@ -62,7 +61,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
-        <ToastProvider />
       </body>
     </html>
   );

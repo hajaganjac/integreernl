@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { recordActivity } from "@/lib/streak";
 
 const schema = z.object({
   quizId: z.string(),
@@ -53,8 +52,6 @@ export async function POST(request: Request) {
       answers: JSON.stringify(answers),
     },
   });
-
-  await recordActivity(session.user.id);
 
   const passed = total > 0 && score / total >= 0.7;
   let moduleComplete = false;
