@@ -22,6 +22,17 @@ export async function POST(request: Request) {
   const { message } = parsed.data;
   const userId = session.user.id;
 
+  // The session is a signed token, so it can outlive the account it points to
+  // (for example after the database is reset). Without this check, saving the
+  // message fails on a foreign key and the chat silently does nothing.
+  const userExists = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+  if (!userExists) {
+    return NextResponse.json({ error: "Session expired" }, { status: 401 });
+  }
+
   await prisma.chatMessage.create({
     data: { userId, role: "user", content: message },
   });

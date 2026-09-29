@@ -43,7 +43,7 @@ const FAQS = [
   },
   {
     q: "How finished is this?",
-    a: "This is an early prototype built as a student project. It covers all five exam parts with three lessons and one quiz each, so the whole learning loop works end to end. More lessons and a smarter study assistant are the next steps.",
+    a: "Not very — and that is on purpose. This is the first working version of a student project. What exists today: you can create an account, the five modules are mapped out, and the study assistant answers questions. What does not exist yet: the lessons and quizzes themselves. Writing those is the next piece of work.",
   },
 ];
 
@@ -79,8 +79,13 @@ export default function Home() {
       <section className="border-b border-ink-100">
         <Container className="py-20">
           <h2 className="text-center font-display text-3xl font-bold text-ink-900">
-            How it works
+            How it will work
           </h2>
+          <p className="mx-auto mt-4 max-w-xl text-center text-body-muted">
+            The plan for each of the five modules. The accounts, the module
+            structure and the study assistant work today; the lessons and quizzes
+            are being written now.
+          </p>
           <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
             {STEPS.map((s, i) => (
               <div key={s.title} className="rounded-lg border border-ink-100 bg-canvas-raised p-7">

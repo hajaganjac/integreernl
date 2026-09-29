@@ -36,23 +36,38 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
     setInput("");
     setLoading(true);
 
+    const showError = (content: string) =>
+      setMessages((prev) => [
+        ...prev,
+        { id: `err-${crypto.randomUUID()}`, role: "assistant", content },
+      ]);
+
     try {
       const res = await fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
       });
-      const data = await res.json();
 
+      // Check the status before parsing: an error response can have an empty
+      // body, and res.json() would then throw and leave the user with no reply
+      // and no explanation.
       if (!res.ok) {
-        setMessages((prev) => [
-          ...prev,
-          { id: `err-${crypto.randomUUID()}`, role: "assistant", content: "Sorry, something went wrong. Please try again." },
-        ]);
+        showError(
+          res.status === 401
+            ? "Your session has expired. Please sign in again."
+            : "Sorry, something went wrong. Please try again."
+        );
         return;
       }
 
-      setMessages((prev) => [...prev, { id: `reply-${crypto.randomUUID()}`, role: "assistant", content: data.reply }]);
+      const data = await res.json();
+      setMessages((prev) => [
+        ...prev,
+        { id: `reply-${crypto.randomUUID()}`, role: "assistant", content: data.reply },
+      ]);
+    } catch {
+      showError("Could not reach the server. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }

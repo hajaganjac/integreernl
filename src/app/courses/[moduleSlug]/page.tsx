@@ -57,6 +57,31 @@ export default async function ModulePage({
       <Container className="py-10">
         <p className="max-w-2xl text-body-muted">{module.description}</p>
 
+        {module.lessons.length === 0 && (
+          <div className="mt-10 rounded-lg border-2 border-dashed border-ink-200 bg-canvas-raised p-10 text-center">
+            <span
+              className={`mx-auto flex h-12 w-12 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
+            >
+              <ModuleIcon name={module.icon} className="h-6 w-6" />
+            </span>
+            <h2 className="mt-5 font-display text-lg font-semibold text-ink-900">
+              Lessons are still being written
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-body-muted">
+              This module is part of the plan for the course, but its lessons and quiz
+              do not exist yet. The structure you see here is what each of the five
+              exam parts will follow.
+            </p>
+            <p className="mx-auto mt-4 max-w-md text-sm text-body-muted">
+              In the meantime you can ask the{" "}
+              <Link href="/assistant" className={`font-semibold ${theme.text} underline underline-offset-2`}>
+                study assistant
+              </Link>{" "}
+              a question about this topic.
+            </p>
+          </div>
+        )}
+
         <div className="mt-10 grid grid-cols-1 gap-4">
           {module.lessons.map((lesson, idx) => {
             const isDone = completedLessonIds.has(lesson.id);

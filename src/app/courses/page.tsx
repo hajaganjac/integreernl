@@ -16,16 +16,20 @@ export default async function CoursesPage() {
     <Container className="py-12">
       <div className="max-w-2xl">
         <Badge>Course</Badge>
-        <h1 className="mt-4 text-3xl font-semibold text-ink-900">Your B1 study plan</h1>
+        <h1 className="mt-4 font-display text-3xl font-bold text-ink-900">
+          Your B1 study plan
+        </h1>
         <p className="mt-3 text-body-muted">
-          Five modules, mapped to the official inburgeringsexamen parts. Work through
-          lessons at your own pace, then check your understanding with a short quiz.
+          Five modules, one for each part of the official inburgeringsexamen. This is
+          the structure of the course. The lessons and quizzes for each module are
+          still being written.
         </p>
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
         {modules.map((m) => {
           const theme = MODULE_THEME[m.examPart];
+          const hasContent = m.lessonsTotal > 0;
 
           return (
             <Link
@@ -41,7 +45,12 @@ export default async function CoursesPage() {
                 >
                   <ModuleIcon name={m.icon} className="h-5 w-5" />
                 </span>
-                {m.percent === 100 ? (
+
+                {!hasContent ? (
+                  <span className="rounded-full bg-ink-50 px-2.5 py-1 text-xs font-semibold text-body-muted">
+                    Planned
+                  </span>
+                ) : m.percent === 100 ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700">
                     <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" /> Complete
                   </span>
@@ -57,15 +66,30 @@ export default async function CoursesPage() {
                 <p className="mt-1.5 flex-1 text-sm text-body-muted">{m.description}</p>
 
                 <div className="mt-5">
-                  <ProgressBar value={m.percent} barClassName={theme.progressBar} />
-                  <div className="mt-2 flex items-center justify-between text-xs text-body-subtle">
-                    <span>
-                      {m.lessonsCompleted}/{m.lessonsTotal} lessons
-                    </span>
-                    <span className={`inline-flex items-center gap-1 font-semibold ${theme.text} group-hover:gap-1.5 transition-all`}>
-                      Continue <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
-                  </div>
+                  {hasContent ? (
+                    <>
+                      <ProgressBar value={m.percent} barClassName={theme.progressBar} />
+                      <div className="mt-2 flex items-center justify-between text-xs text-body-subtle">
+                        <span>
+                          {m.lessonsCompleted}/{m.lessonsTotal} lessons
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 font-semibold ${theme.text} group-hover:gap-1.5 transition-all`}
+                        >
+                          Continue <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-between border-t border-ink-100 pt-4 text-xs text-body-subtle">
+                      <span>Lessons coming soon</span>
+                      <span
+                        className={`inline-flex items-center gap-1 font-semibold ${theme.text} group-hover:gap-1.5 transition-all`}
+                      >
+                        View module <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </Link>
