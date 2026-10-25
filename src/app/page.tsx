@@ -43,12 +43,34 @@ const FAQS = [
   },
 ];
 
+/**
+ * The landing page is the one page that should still render if the database
+ * is unreachable — it is what a first-time visitor (or an interview
+ * participant) sees. The situation list is a nice-to-have, so a failed query
+ * degrades to hiding that one section rather than returning a 500.
+ */
+async function getScenariosSafely() {
+  try {
+    return await prisma.scenario.findMany({
+      orderBy: { order: "asc" },
+      take: 6,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        dutchTitle: true,
+        icon: true,
+        level: true,
+        published: true,
+      },
+    });
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
-  const scenarios = await prisma.scenario.findMany({
-    orderBy: { order: "asc" },
-    take: 6,
-    select: { id: true, slug: true, title: true, dutchTitle: true, icon: true, level: true, published: true },
-  });
+  const scenarios = await getScenariosSafely();
 
   return (
     <>
@@ -109,7 +131,8 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Situations */}
+      {/* Situations — hidden entirely if the list could not be loaded */}
+      {scenarios.length > 0 && (
       <section className="border-b border-ink-100 bg-canvas-raised">
         <Container className="py-20">
           <div className="mx-auto max-w-2xl text-center">
@@ -152,6 +175,7 @@ export default async function Home() {
           </ul>
         </Container>
       </section>
+      )}
 
       {/* Questions */}
       <section>

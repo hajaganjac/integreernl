@@ -2,8 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Postgres, not SQLite: Vercel runs each request in a serverless function with
+// no persistent filesystem, so a .db file cannot work there. Any hosted
+// Postgres (Neon, Vercel Postgres, Supabase) works — it is one connection
+// string either way.
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

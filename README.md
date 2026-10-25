@@ -44,25 +44,22 @@ happened.
 
 - **Next.js** (App Router) + TypeScript
 - **Tailwind CSS v4** — design tokens defined once in `globals.css`
-- **Prisma + SQLite**
+- **Prisma + Postgres** (any host — Neon, Vercel Postgres, Supabase)
 - **NextAuth** for email/password login
 
 ## Running it
 
 ```bash
 npm install
-npx prisma migrate dev   # creates the database
-npm run db:seed          # loads the situations
-npm run dev              # http://localhost:3000
+cp .env.example .env     # then fill in DATABASE_URL and AUTH_SECRET
+npx prisma migrate deploy   # creates the tables
+npm run db:seed             # loads the situations
+npm run dev                 # http://localhost:3000
 ```
 
-`.env` needs:
-
-```
-DATABASE_URL="file:./dev.db"
-AUTH_SECRET="a long random string"
-OPENAI_API_KEY=""        # optional; without it the assistant uses written answers
-```
+You need a Postgres connection string — [Neon](https://neon.tech) has a free
+tier. See [`docs/deploying.md`](docs/deploying.md) for the full setup, including
+putting the site online with Vercel.
 
 ## How the code is organised
 

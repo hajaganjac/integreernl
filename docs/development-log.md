@@ -144,3 +144,30 @@ decision; not changed unilaterally since the logo is a supplied asset.
   hypothesis. Not built.
 - SQLite does not work on Vercel's serverless hosting. Moving to Postgres is
   required before the prototype can be put online for remote user testing.
+
+---
+
+## 2026-10-26 — Moved from SQLite to Postgres so the prototype can go online
+
+**What changed.** The datasource is now `postgresql`. A Postgres migration
+replaces the SQLite one, `postinstall: prisma generate` was added, and
+`vercel.json` runs `prisma migrate deploy` as part of the build.
+
+**Why.** Vercel runs each request in a serverless function with no persistent
+filesystem, so a SQLite `.db` file cannot work there — and it was gitignored, so
+the deployed app had no database at all.
+
+**Evidence status.** Constraint. A hosting limitation, not a research result.
+
+**Why it matters for the research.** Analysis ch. 1.5 lists finding five
+interview participants as the next step. Remote participants need a URL they can
+open; this unblocks that.
+
+**Side effect.** Local development now also needs a Postgres connection string,
+because one schema cannot describe two database engines. While this is a
+prototype, pointing local development at the same hosted database is the
+simplest option. Documented in `docs/deploying.md`.
+
+**Also hardened.** The landing page now catches a failed database query and
+hides the situations list instead of returning a 500, so a database problem does
+not take down the page an interview participant opens first.
