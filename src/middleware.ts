@@ -1,7 +1,13 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/courses", "/assistant", "/profile"];
+/**
+ * /practice is deliberately public: a visitor should be able to see which
+ * situations exist before deciding to make an account. The individual
+ * situation page redirects to login itself, because playing one writes
+ * progress against a user.
+ */
+const PROTECTED_PREFIXES = ["/dashboard", "/assistant"];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
@@ -15,5 +21,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/courses/:path*", "/assistant/:path*", "/profile/:path*"],
+  matcher: ["/dashboard/:path*", "/assistant/:path*"],
 };

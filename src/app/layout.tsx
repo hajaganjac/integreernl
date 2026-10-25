@@ -20,17 +20,17 @@ const inter = Inter({
 });
 
 const SITE_DESCRIPTION =
-  "A free self-study platform to help family-migrants prepare for the Dutch civic integration exam (inburgering) — structured lessons, quizzes and progress tracking.";
+  "Practise the Dutch you actually need. Short, realistic conversations for expats and internationals who are beginners in Dutch.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://integreernl.vercel.app"),
   title: {
-    default: "IntegreerNL — Learn Dutch. For free.",
+    default: "IntegreerNL — Practical Dutch for expats",
     template: "%s · IntegreerNL",
   },
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "IntegreerNL — Learn Dutch. For free.",
+    title: "IntegreerNL — Practical Dutch for expats",
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "en_NL",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "IntegreerNL — Learn Dutch. For free.",
+    title: "IntegreerNL — Practical Dutch for expats",
     description: SITE_DESCRIPTION,
   },
 };

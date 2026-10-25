@@ -10,34 +10,47 @@ export function Footer() {
           <div className="md:col-span-2">
             <Logo withTagline size={30} />
             <p className="mt-4 max-w-sm text-sm leading-6 text-body-muted">
-              A free, independent study platform for the Dutch civic integration exam
-              (inburgering). Built for family-migrants who fund their own path to B1 —
-              structured lessons, adaptive quizzes and an AI study buddy, at no cost.
+              Practical Dutch for expats and internationals who are starting from the
+              beginning. Short, realistic conversations instead of grammar drills — built
+              and tested as a student project at Fontys ICT.
             </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-ink-900">Study</h3>
+            <h3 className="text-sm font-semibold text-ink-900">Practise</h3>
             <ul className="mt-4 space-y-3 text-sm text-body-muted">
-              <li><Link href="/courses" className="hover:text-brand-600">All modules</Link></li>
-              <li><Link href="/assistant" className="hover:text-brand-600">AI assistant</Link></li>
-              <li><Link href="/dashboard" className="hover:text-brand-600">My progress</Link></li>
+              <li>
+                <Link href="/practice" className="hover:text-brand-600">
+                  Everyday situations
+                </Link>
+              </li>
+              <li>
+                <Link href="/assistant" className="hover:text-brand-600">
+                  Study assistant
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="hover:text-brand-600">
+                  Your progress
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold text-ink-900">About</h3>
             <ul className="mt-4 space-y-3 text-sm text-body-muted">
-              <li><Link href="/#exam" className="hover:text-brand-600">The exam, explained</Link></li>
-              <li><Link href="/#faq" className="hover:text-brand-600">FAQ</Link></li>
+              <li>
+                <Link href="/#faq" className="hover:text-brand-600">
+                  Questions
+                </Link>
+              </li>
               <li>
                 <a
-                  href="https://www.inburgeren.nl"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="mailto:ha.jaganjac@gmail.com?subject=IntegreerNL%20research"
                   className="hover:text-brand-600"
                 >
-                  Official DUO / Rijksoverheid
+                  Take part in the research
                 </a>
               </li>
             </ul>
@@ -45,8 +58,11 @@ export function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-ink-100 pt-6 text-xs text-body-subtle sm:flex-row sm:items-center">
-          <p>&copy; {new Date().getFullYear()} IntegreerNL. A student research project, not an official government service.</p>
-          <p>Built with care in Eindhoven.</p>
+          <p>
+            &copy; {new Date().getFullYear()} IntegreerNL. A student project in
+            development, not a finished product.
+          </p>
+          <p>Built in Eindhoven.</p>
         </div>
       </Container>
     </footer>

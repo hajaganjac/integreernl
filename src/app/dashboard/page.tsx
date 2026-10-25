@@ -4,19 +4,20 @@ import { getOverallProgress } from "@/lib/data";
 import { Container } from "@/components/ui/Container";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
-import { ModuleIcon } from "@/components/courses/ModuleIcon";
-import { MODULE_THEME } from "@/lib/moduleTheme";
-import { ArrowRight } from "lucide-react";
-import type { ExamPart } from "@prisma/client";
+import { ScenarioIcon } from "@/components/scenarios/ScenarioIcon";
+import { LEVEL_THEME } from "@/lib/levelTheme";
+import { ArrowRight, Check, MessageSquare } from "lucide-react";
+
+export const metadata = { title: "Your progress" };
 
 export default async function DashboardPage() {
   const session = await auth();
-  const userId = session!.user.id;
-  const data = await getOverallProgress(userId);
+  const data = await getOverallProgress(session!.user.id);
 
-  const nextModule = data.modules.find((m) => m.percent < 100);
-  // No lessons exist yet, so progress numbers would all read 0 / 0.
-  const hasContent = data.totalLessons > 0;
+  const pct = data.publishedTotal
+    ? Math.round((data.completed / data.publishedTotal) * 100)
+    : 0;
+  const next = data.published.find((s) => !s.progress?.completed);
 
   return (
     <Container className="py-12">
@@ -26,163 +27,89 @@ export default async function DashboardPage() {
             Hello, {session!.user.name?.split(" ")[0]}
           </h1>
           <p className="mt-1.5 text-body-muted">
-            {hasContent
-              ? "Here is how far you have come."
-              : "This is where your progress will appear."}
+            {data.completed === 0
+              ? "You have not tried a situation yet."
+              : `You have been through ${data.completed} of ${data.publishedTotal} situations.`}
           </p>
         </div>
-        {hasContent && nextModule && (
-          <Button href={`/courses/${nextModule.slug}`}>
-            Continue {nextModule.title}
+        {next && (
+          <Button href={`/practice/${next.slug}`}>
+            {data.completed === 0 ? "Start" : "Continue"}: {next.title}
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         )}
       </div>
 
-      {hasContent ? (
-        <>
-          {/* Three plain numbers */}
-          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <StatCard
-              value={`${data.completedLessons} / ${data.totalLessons}`}
-              label="Lessons completed"
-            />
-            <StatCard
-              value={`${data.passedQuizzes} / ${data.totalQuizzes}`}
-              label="Quizzes passed"
-            />
-            <StatCard value={`${data.overallPercent}%`} label="Overall progress" />
-          </div>
-
-          {/* Per-module progress */}
-          <div className="mt-8 rounded-lg border border-ink-100 bg-canvas-raised p-6">
-            <h2 className="font-display font-semibold text-ink-900">Progress by module</h2>
-            <div className="mt-6 space-y-5">
-              {data.modules.map((m) => {
-                const theme = MODULE_THEME[m.examPart];
-                return (
-                  <Link
-                    key={m.id}
-                    href={`/courses/${m.slug}`}
-                    className="flex items-center gap-4 rounded-md p-2 -m-2 hover:bg-canvas-sunken"
-                  >
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
-                    >
-                      <ModuleIcon name={m.icon} className="h-[18px] w-[18px]" />
-                    </span>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium text-ink-900">{m.title}</span>
-                        <span className="text-body-subtle">{m.percent}%</span>
-                      </div>
-                      <ProgressBar
-                        value={m.percent}
-                        className="mt-2"
-                        barClassName={theme.progressBar}
-                      />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Recent quiz attempts */}
-          <div className="mt-8 rounded-lg border border-ink-100 bg-canvas-raised p-6">
-            <h2 className="font-display font-semibold text-ink-900">Recent quiz attempts</h2>
-            {data.recentAttempts.length === 0 ? (
-              <p className="mt-4 text-sm text-body-muted">
-                You have not taken a quiz yet. Finish a few lessons, then try the module quiz.
-              </p>
-            ) : (
-              <ul className="mt-4 divide-y divide-ink-100">
-                {data.recentAttempts.map((a) => (
-                  <li key={a.id} className="flex items-center justify-between py-2.5 text-sm">
-                    <span className="text-ink-900">{a.quiz.module.title}</span>
-                    <span className="text-body-muted">
-                      {a.score}/{a.total} ·{" "}
-                      {new Date(a.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                      })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </>
-      ) : (
-        <EmptyDashboard modules={data.modules} />
-      )}
-    </Container>
-  );
-}
-
-/** Shown while the course has no lessons yet: explains what will appear here. */
-function EmptyDashboard({
-  modules,
-}: {
-  modules: { id: string; slug: string; title: string; examPart: ExamPart; icon: string }[];
-}) {
-  return (
-    <>
-      <div className="mt-8 rounded-lg border-2 border-dashed border-ink-200 bg-canvas-raised p-8 text-center">
-        <h2 className="font-display text-lg font-semibold text-ink-900">
-          Your progress will show up here
-        </h2>
-        <p className="mx-auto mt-2 max-w-lg text-sm text-body-muted">
-          Once the lessons are written, this page will show how many you have
-          finished, which quizzes you have passed, and a bar for each of the five
-          exam parts. Nothing to track yet.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Button href="/courses" variant="outline">
-            See the course plan
-          </Button>
-          <Button href="/assistant">
-            Ask the study assistant
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Button>
+      {/* Overall */}
+      <div className="mt-8 rounded-lg border border-ink-100 bg-canvas-raised p-6">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display font-semibold text-ink-900">Situations practised</h2>
+          <span className="font-display text-2xl font-bold text-ink-900">
+            {data.completed} / {data.publishedTotal}
+          </span>
         </div>
+        <ProgressBar value={pct} className="mt-4" />
+        <p className="mt-3 text-sm text-body-muted">
+          {data.plannedTotal} more {data.plannedTotal === 1 ? "situation is" : "situations are"}{" "}
+          on the list but not built yet — which ones get made depends on what the research says
+          people need.
+        </p>
       </div>
 
+      {/* Per situation */}
       <div className="mt-8 rounded-lg border border-ink-100 bg-canvas-raised p-6">
-        <h2 className="font-display font-semibold text-ink-900">The five modules</h2>
-        <p className="mt-1 text-sm text-body-muted">
-          The structure of the course is set. The content comes next.
-        </p>
-        <div className="mt-5 space-y-2">
-          {modules.map((m) => {
-            const theme = MODULE_THEME[m.examPart];
+        <h2 className="font-display font-semibold text-ink-900">Your situations</h2>
+        <ul className="mt-5 space-y-2">
+          {data.published.map((s) => {
+            const theme = LEVEL_THEME[s.level];
+            const done = s.progress?.completed;
             return (
-              <Link
-                key={m.id}
-                href={`/courses/${m.slug}`}
-                className="flex items-center gap-4 rounded-md p-2 -m-2 hover:bg-canvas-sunken"
-              >
-                <span
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
+              <li key={s.id}>
+                <Link
+                  href={`/practice/${s.slug}`}
+                  className="flex items-center gap-4 rounded-md p-2 -m-2 hover:bg-canvas-sunken"
                 >
-                  <ModuleIcon name={m.icon} className="h-[18px] w-[18px]" />
-                </span>
-                <span className="flex-1 text-sm font-medium text-ink-900">{m.title}</span>
-                <span className="text-xs text-body-subtle">Planned</span>
-              </Link>
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
+                  >
+                    <ScenarioIcon name={s.icon} className="h-[18px] w-[18px]" />
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-medium text-ink-900">{s.title}</span>
+                    <span className="block text-xs text-body-subtle">{s.dutchTitle}</span>
+                  </span>
+                  {done ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-700">
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                      {s.progress!.bestCorrect}/{s.progress!.totalChoices}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-body-subtle">Not tried</span>
+                  )}
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
-    </>
-  );
-}
 
-function StatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-lg border border-ink-100 bg-canvas-raised p-6">
-      <p className="font-display text-3xl font-bold text-ink-900">{value}</p>
-      <p className="mt-1 text-sm text-body-muted">{label}</p>
-    </div>
+      {/* Assistant pointer */}
+      <div className="mt-8 flex flex-col items-start gap-4 rounded-lg border border-ink-100 bg-canvas-raised p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-50 text-accent-700">
+            <MessageSquare className="h-[18px] w-[18px]" aria-hidden="true" />
+          </span>
+          <div>
+            <p className="text-sm font-medium text-ink-900">Stuck on something?</p>
+            <p className="text-sm text-body-muted">
+              Ask the assistant about a word or a phrase you ran into.
+            </p>
+          </div>
+        </div>
+        <Button href="/assistant" variant="outline">
+          Open the assistant
+        </Button>
+      </div>
+    </Container>
   );
 }

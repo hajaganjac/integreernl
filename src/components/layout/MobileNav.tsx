@@ -6,8 +6,8 @@ import { Menu, X } from "lucide-react";
 import { signOutAction } from "@/lib/actions";
 
 const NAV_LINKS = [
-  { href: "/courses", label: "Courses" },
-  { href: "/assistant", label: "AI Assistant" },
+  { href: "/practice", label: "Practice" },
+  { href: "/assistant", label: "Assistant" },
   { href: "/dashboard", label: "Dashboard" },
 ];
 

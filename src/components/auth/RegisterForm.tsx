@@ -76,7 +76,7 @@ export function RegisterForm() {
             autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Amina Yilmaz"
+            placeholder="Your name"
             className="w-full bg-transparent text-sm outline-none"
           />
         </div>
@@ -92,7 +92,7 @@ export function RegisterForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="amina@example.com"
+            placeholder="you@example.com"
             className="w-full bg-transparent text-sm outline-none"
           />
         </div>

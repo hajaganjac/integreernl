@@ -1,91 +1,91 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { ModuleIcon } from "@/components/courses/ModuleIcon";
-import { MODULE_THEME } from "@/lib/moduleTheme";
-import { EXAM_PART_META } from "@/lib/utils";
-import type { ExamPart } from "@prisma/client";
-import { BookOpen, ClipboardCheck, BarChart3, ArrowRight, Info } from "lucide-react";
-
-const EXAM_PARTS: { part: ExamPart; icon: string; desc: string }[] = [
-  { part: "READING", icon: "BookOpen", desc: "Understand Dutch letters, forms and notices." },
-  { part: "WRITING", icon: "PenLine", desc: "Write short texts, emails and messages." },
-  { part: "LISTENING", icon: "Headphones", desc: "Follow spoken Dutch in daily situations." },
-  { part: "SPEAKING", icon: "Mic", desc: "Speak confidently in everyday conversations." },
-  { part: "KNM", icon: "Landmark", desc: "Know how Dutch society and institutions work." },
-];
+import { ScenarioIcon } from "@/components/scenarios/ScenarioIcon";
+import { prisma } from "@/lib/prisma";
+import { LEVEL_THEME } from "@/lib/levelTheme";
+import { MessageCircle, MousePointerClick, Lightbulb, ArrowRight, Info } from "lucide-react";
 
 const STEPS = [
   {
-    icon: BookOpen,
-    title: "Read a short lesson",
-    body: "Each module is broken into short lessons you can finish in about ten minutes.",
+    icon: MessageCircle,
+    title: "A real situation",
+    body: "You are in a café, at the counter. The barista says something in Dutch, and you read what it means.",
   },
   {
-    icon: ClipboardCheck,
-    title: "Check yourself with a quiz",
-    body: "Answer a question and you find out straight away whether you were right, and why.",
+    icon: MousePointerClick,
+    title: "You choose what to say",
+    body: "Two or three replies, all of them things a learner might actually say. You pick one.",
   },
   {
-    icon: BarChart3,
-    title: "See how far you are",
-    body: "Your dashboard shows which lessons are done and which quizzes you have passed.",
+    icon: Lightbulb,
+    title: "You find out why",
+    body: "Not just right or wrong — why one reply sounds natural to a Dutch person and another sounds blunt.",
   },
 ];
 
 const FAQS = [
   {
-    q: "Is IntegreerNL free?",
-    a: "Yes. Family-migrants have to pay for their own inburgering course or take a DUO loan, unlike asylum status holders whose course is funded. This platform is free to use.",
-  },
-  {
-    q: "Does this replace the official exam?",
-    a: "No. It is a study aid to help you prepare. For official exam registration, rules and deadlines always use inburgeren.nl (DUO).",
+    q: "Who is this for?",
+    a: "Expats and internationals living, working or studying in the Netherlands who are beginners in Dutch (roughly A0 to A2) and want the Dutch they need in daily life. It is not aimed at people preparing for the inburgering exam — that is a different level with different content.",
   },
   {
     q: "How finished is this?",
-    a: "Not very — and that is on purpose. This is the first working version of a student project. What exists today: you can create an account, the five modules are mapped out, and the study assistant answers questions. What does not exist yet: the lessons and quizzes themselves. Writing those is the next piece of work.",
+    a: "Early. One situation is fully built: ordering coffee. Five more are listed but not written. What gets built next depends on what people tell me they need — I am interviewing expats about this now, and the answers decide the content.",
+  },
+  {
+    q: "What does it cost?",
+    a: "Nothing right now. It is a prototype being tested, so there is no payment and no account charge. Whether there is ever a price, and what it would be, is one of the things I am researching — I have not decided.",
+  },
+  {
+    q: "Why build this when Duolingo exists?",
+    a: "Honestly, that is the question I am testing. Courses run from roughly €528 to €875 for a single level, while apps cost a few euros a month. My hunch is there is room in between for something that focuses on real situations — but a hunch is not a finding, and if the interviews say otherwise I will change direction.",
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const scenarios = await prisma.scenario.findMany({
+    orderBy: { order: "asc" },
+    take: 6,
+    select: { id: true, slug: true, title: true, dutchTitle: true, icon: true, level: true, published: true },
+  });
+
   return (
     <>
       {/* Hero */}
       <section className="border-b border-ink-100 bg-canvas-raised">
         <Container className="py-20 text-center">
           <p className="text-sm font-semibold text-accent-700">
-            Free · No course fee, no DUO loan
+            For expats and internationals learning Dutch
           </p>
           <h1 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-bold text-ink-900 sm:text-5xl">
-            Prepare for your inburgering exam, for free
+            Practise the Dutch you actually need
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-body-muted">
-            A simple study platform for people who moved to the Netherlands through
-            marriage or family reunification and need to reach Dutch level B1.
+            Short, realistic conversations — ordering a coffee, talking to a colleague,
+            asking where something is. You choose what to say and find out how it lands.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-4">
             <Button href="/register" size="lg">
-              Create a free account
+              Try a conversation
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button href="/login" variant="outline" size="lg">
-              Log in
+            <Button href="/practice" variant="outline" size="lg">
+              See the situations
             </Button>
           </div>
+          <p className="mt-6 text-sm text-body-subtle">
+            Free while it is being tested. No payment details.
+          </p>
         </Container>
       </section>
 
-      {/* How it works */}
+      {/* How a situation works */}
       <section className="border-b border-ink-100">
         <Container className="py-20">
           <h2 className="text-center font-display text-3xl font-bold text-ink-900">
-            How it will work
+            How a situation works
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-center text-body-muted">
-            The plan for each of the five modules. The accounts, the module
-            structure and the study assistant work today; the lessons and quizzes
-            are being written now.
-          </p>
           <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
             {STEPS.map((s, i) => (
               <div key={s.title} className="rounded-lg border border-ink-100 bg-canvas-raised p-7">
@@ -99,73 +99,74 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          <div className="mt-10 text-center">
+            <Button href="/practice" variant="outline">
+              Look at the situations
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Button>
+          </div>
         </Container>
       </section>
 
-      {/* Modules */}
+      {/* Situations */}
       <section className="border-b border-ink-100 bg-canvas-raised">
         <Container className="py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="font-display text-3xl font-bold text-ink-900">
-              Five modules, one per exam part
+              Situations, not grammar chapters
             </h2>
             <p className="mt-4 text-body-muted">
-              To pass you need Reading, Writing, Listening and Speaking at B1, plus
-              Knowledge of Dutch Society (KNM).
+              The content is organised by what you are trying to do, not by verb tense. One
+              is built so far; the rest are candidates.
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            {EXAM_PARTS.map(({ part, icon, desc }) => {
-              const theme = MODULE_THEME[part];
-              const meta = EXAM_PART_META[part];
+          <ul className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {scenarios.map((s) => {
+              const theme = LEVEL_THEME[s.level];
               return (
-                <div
-                  key={part}
-                  className="overflow-hidden rounded-lg border border-ink-100 bg-canvas"
+                <li
+                  key={s.id}
+                  className={`flex items-center gap-3 rounded-lg border px-4 py-3 ${
+                    s.published
+                      ? "border-ink-100 bg-canvas"
+                      : "border-dashed border-ink-200 bg-canvas"
+                  }`}
                 >
-                  <div className={`h-1.5 ${theme.progressBar}`} aria-hidden="true" />
-                  <div className="p-6">
-                    <span
-                      className={`flex h-11 w-11 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
-                    >
-                      <ModuleIcon name={icon} className="h-5 w-5" />
-                    </span>
-                    <h3 className="mt-4 font-display font-semibold text-ink-900">{meta.label}</h3>
-                    <p className={`text-xs font-semibold ${theme.text}`}>{meta.nl}</p>
-                    <p className="mt-2 text-sm text-body-muted">{desc}</p>
-                  </div>
-                </div>
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${theme.bgTint} ${theme.text}`}
+                  >
+                    <ScenarioIcon name={s.icon} className="h-[18px] w-[18px]" />
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-medium text-ink-900">{s.title}</span>
+                    <span className="block text-xs text-body-subtle">{s.dutchTitle}</span>
+                  </span>
+                  <span className="text-xs font-semibold text-body-subtle">
+                    {s.published ? theme.label : "soon"}
+                  </span>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </Container>
       </section>
 
-      {/* FAQ */}
+      {/* Questions */}
       <section>
         <Container className="py-20">
-          <h2 className="text-center font-display text-3xl font-bold text-ink-900">
-            Questions
-          </h2>
+          <h2 className="text-center font-display text-3xl font-bold text-ink-900">Questions</h2>
 
           <div className="mx-auto mt-8 max-w-2xl">
             <div className="flex items-start gap-3 rounded-md border border-accent-200 bg-accent-50 p-5">
               <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent-700" aria-hidden="true" />
               <p className="text-sm text-accent-900">
                 <strong className="font-semibold">
-                  IntegreerNL is a student project, not an official government service.
+                  This is a student project in development, not a finished product.
                 </strong>{" "}
-                For official rules and registration, use{" "}
-                <a
-                  href="https://www.inburgeren.nl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold underline underline-offset-2"
-                >
-                  inburgeren.nl
-                </a>
-                .
+                I am a Fontys ICT student researching how expats learn Dutch, and this
+                prototype is part of that research. It is being tested and will change.
               </p>
             </div>
 
@@ -180,11 +181,26 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="mt-10 text-center">
-              <Button href="/register" size="lg">
-                Create a free account
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Button>
+            <div className="mt-10 rounded-lg border border-ink-100 bg-canvas-raised p-6 text-center">
+              <p className="font-display font-semibold text-ink-900">
+                Learning Dutch as an expat? I want to hear from you.
+              </p>
+              <p className="mx-auto mt-2 max-w-md text-sm text-body-muted">
+                I am interviewing people about what is actually hard about learning Dutch
+                here. What you say shapes what gets built next.
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <Button href="/register">
+                  Try the prototype
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Button>
+                <Link
+                  href="mailto:ha.jaganjac@gmail.com?subject=IntegreerNL%20research"
+                  className="inline-flex items-center justify-center rounded-md border border-ink-200 bg-canvas-raised px-5 py-2.5 text-sm font-semibold text-ink-900 hover:bg-ink-50"
+                >
+                  Take part in the research
+                </Link>
+              </div>
             </div>
           </div>
         </Container>

@@ -13,7 +13,7 @@ export default function LoginPage() {
           </span>
           <h1 className="mt-4 text-2xl font-semibold text-ink-900">Welcome back</h1>
           <p className="mt-1.5 text-sm text-body-muted">
-            Log in to continue your inburgering study plan.
+            Log in to carry on practising.
           </p>
         </div>
 

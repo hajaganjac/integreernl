@@ -7,17 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ExamPart {
-  READING
-  WRITING
-  LISTENING
-  SPEAKING
-  KNM
+// ---------------------------------------------------------------------------
+// Content model: everyday situations, not exam parts.
+//
+// Analysis v2 ch. 3.1 and 3.2 put inburgering / B1 exam preparation explicitly
+// out of scope, so the previous ExamPart taxonomy (Reading / Writing /
+// Listening / Speaking / KNM) was removed. The content is now organised by the
+// daily situation a learner wants to handle, which is what sub-question 2
+// ("In which daily situations do expats need Dutch the most?") asks about.
+//
+// EVIDENCE STATUS: the situation list itself is a design hypothesis. Which
+// situations actually matter must come from the interviews (ch. 8, planned).
+// The structure below is deliberately data-driven so situations can be added,
+// reordered or removed after the interviews without touching the player code.
+// ---------------------------------------------------------------------------
+
+enum Level {
+  A0
+  A1
+  A2
 }
 
-enum QuestionType {
-  MULTIPLE_CHOICE
-  TRUE_FALSE
+enum Speaker {
+  PARTNER // the Dutch person in the conversation
+  LEARNER // the user chooses what to say
 }
 
 model User {
@@ -28,109 +41,82 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  progress     LessonProgress[]
-  attempts     QuizAttempt[]
+  progress     ScenarioProgress[]
   chatMessages ChatMessage[]
 }
 
-model Module {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  examPart    ExamPart
+/// One everyday situation, e.g. "Ordering coffee".
+model Scenario {
+  id          String  @id @default(cuid())
+  slug        String  @unique
   title       String
+  dutchTitle  String
   description String
+  /// Short line shown before starting: where you are, who you are talking to.
+  setting     String  @default("")
+  level       Level   @default(A1)
+  icon        String  @default("MessageCircle")
+  minutes     Int     @default(5)
   order       Int
-  icon        String   @default("BookOpen")
-  color       String   @default("blue")
+  /// false = listed as a planned situation, not yet written
+  published   Boolean @default(false)
 
-  lessons     Lesson[]
-  quizzes     Quiz[]
+  steps    ScenarioStep[]
+  progress ScenarioProgress[]
 }
 
-model Lesson {
-  id        String   @id @default(cuid())
-  slug      String
-  moduleId  String
-  title     String
-  summary   String
-  content   String   // markdown
+/// One turn in the conversation.
+model ScenarioStep {
+  id         String  @id @default(cuid())
+  scenarioId String
+  order      Int
+  speaker    Speaker
+  /// What the partner says (PARTNER steps), or the prompt for the learner.
+  dutch      String
+  english    String
+  /// Optional nudge shown if the learner asks for a hint.
+  hint       String  @default("")
+
+  scenario Scenario         @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  choices  ScenarioChoice[]
+}
+
+/// A reply the learner can pick on a LEARNER step.
+model ScenarioChoice {
+  id        String  @id @default(cuid())
+  stepId    String
   order     Int
-  minutes   Int      @default(10)
+  dutch     String
+  english   String
+  isCorrect Boolean @default(false)
+  /// Why this reply works, or why it does not.
+  feedback  String
 
-  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  progress  LessonProgress[]
-
-  @@unique([moduleId, slug])
+  step ScenarioStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
 }
 
-model LessonProgress {
-  id          String    @id @default(cuid())
-  userId      String
-  lessonId    String
-  completed   Boolean   @default(false)
-  completedAt DateTime?
+model ScenarioProgress {
+  id           String    @id @default(cuid())
+  userId       String
+  scenarioId   String
+  completed    Boolean   @default(false)
+  completedAt  DateTime?
+  /// Best result so far, used to show "3 / 4 right" on the situation card.
+  bestCorrect  Int       @default(0)
+  totalChoices Int       @default(0)
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scenario Scenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, lessonId])
-}
-
-model Quiz {
-  id        String     @id @default(cuid())
-  slug      String
-  moduleId  String
-  title     String
-  order     Int
-
-  module    Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  questions Question[]
-  attempts  QuizAttempt[]
-
-  @@unique([moduleId, slug])
-}
-
-model Question {
-  id            String       @id @default(cuid())
-  quizId        String
-  prompt        String
-  explanation   String       @default("")
-  type          QuestionType @default(MULTIPLE_CHOICE)
-  order         Int
-
-  quiz          Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  options       Option[]
-}
-
-model Option {
-  id          String   @id @default(cuid())
-  questionId  String
-  label       String
-  isCorrect   Boolean  @default(false)
-  order       Int
-
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-}
-
-model QuizAttempt {
-  id        String   @id @default(cuid())
-  userId    String
-  quizId    String
-  score     Int
-  total     Int
-  answers   String   // JSON blob: { questionId: optionId }
-  createdAt DateTime @default(now())
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  @@unique([userId, scenarioId])
 }
 
 model ChatMessage {
   id        String   @id @default(cuid())
   userId    String
-  role      String   // "user" | "assistant"
+  role      String // "user" | "assistant"
   content   String
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -19,10 +19,10 @@ export default async function AssistantPage() {
   return (
     <Container className="py-12">
       <div className="mx-auto max-w-3xl">
-        <Badge color="accent">AI study buddy</Badge>
-        <h1 className="mt-3 text-3xl font-semibold text-ink-900">Ask anything about Dutch or the exam</h1>
+        <Badge color="accent">Study assistant</Badge>
+        <h1 className="mt-3 text-3xl font-semibold text-ink-900">Ask anything about Dutch</h1>
         <p className="mt-2 text-body-muted">
-          Practice grammar, ask about a KNM topic, or rehearse a conversation — any time, no appointment needed.
+          Stuck on a word, a phrase, or something someone said to you? Ask here.
         </p>
 
         <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800 ring-1 ring-inset ring-amber-100">

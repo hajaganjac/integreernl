@@ -6,8 +6,8 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { Logo } from "@/components/ui/Logo";
 
 const NAV_LINKS = [
-  { href: "/courses", label: "Courses" },
-  { href: "/assistant", label: "AI Assistant" },
+  { href: "/practice", label: "Practice" },
+  { href: "/assistant", label: "Assistant" },
   { href: "/dashboard", label: "Dashboard" },
 ];
 

@@ -12,10 +12,10 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  "When do I use 'hebben' vs 'zijn'?",
-  "Help me practice a doctor's appointment",
-  "How do I write a formal email in Dutch?",
-  "What is KNM and what should I know?",
+  "When do I use 'u' and when 'jij'?",
+  "How do I order a coffee in Dutch?",
+  "What is the difference between 'geen' and 'niet'?",
+  "People keep switching to English. What can I say?",
 ];
 
 export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) {
@@ -151,7 +151,7 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about grammar, KNM, or practice a conversation..."
+          placeholder="Ask about a word, a phrase, or a situation..."
           className="flex-1 rounded-xl bg-canvas-sunken px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-100"
         />
         <button
