@@ -1,37 +1,36 @@
-import { PrismaClient, Level, Speaker } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
 /**
- * Seed content for the first interactive prototype.
+ * The situations, as plain data.
  *
- * Analysis v2 ch. 3: the target group is expat beginners (A0–A2) who want
- * practical Dutch for daily life. Content is therefore organised by everyday
- * situation.
+ * This used to live in a database, which meant the prototype could not be put
+ * online without hosting Postgres and configuring secrets. The content never
+ * changed at runtime — it is written by me, in the repo — so it belongs here.
+ * Editing this file and pushing is now the whole content workflow.
  *
- * EVIDENCE STATUS — design hypothesis, not a finding.
- * The interviews (ch. 8) and survey (ch. 10) are still planned, so the list of
- * situations below is my best guess at what matters, not a research result.
- * One situation is written in full on purpose: it is enough to test the idea
- * with real users before investing in more content.
+ * EVIDENCE STATUS — design hypothesis, not a finding (Analysis ch. 8–11 are
+ * still planned). The list of situations is my best guess at what matters;
+ * the interviews decide what actually gets built.
  */
 
-interface ChoiceSeed {
+export type Level = "A0" | "A1" | "A2";
+
+export interface Choice {
+  id: string;
   dutch: string;
   english: string;
   isCorrect: boolean;
   feedback: string;
 }
 
-interface StepSeed {
-  speaker: Speaker;
+export interface Step {
+  id: string;
+  speaker: "PARTNER" | "LEARNER";
   dutch: string;
   english: string;
   hint?: string;
-  choices?: ChoiceSeed[];
+  choices?: Choice[];
 }
 
-interface ScenarioSeed {
+export interface Scenario {
   slug: string;
   title: string;
   dutchTitle: string;
@@ -41,13 +40,10 @@ interface ScenarioSeed {
   icon: string;
   minutes: number;
   published: boolean;
-  steps?: StepSeed[];
+  steps?: Step[];
 }
 
-const SCENARIOS: ScenarioSeed[] = [
-  // ---------------------------------------------------------------------
-  // The one fully written situation.
-  // ---------------------------------------------------------------------
+export const SCENARIOS: Scenario[] = [
   {
     slug: "ordering-coffee",
     title: "Ordering coffee",
@@ -61,17 +57,20 @@ const SCENARIOS: ScenarioSeed[] = [
     published: true,
     steps: [
       {
+        id: "coffee-1",
         speaker: "PARTNER",
         dutch: "Goedemorgen! Wat wilt u bestellen?",
         english: "Good morning! What would you like to order?",
       },
       {
+        id: "coffee-2",
         speaker: "LEARNER",
         dutch: "Order a coffee.",
         english: "Say what you would like.",
         hint: "“Ik wil graag…” means “I would like…”. It is the polite, normal way to order.",
         choices: [
           {
+            id: "coffee-2a",
             dutch: "Ik wil graag een koffie, alstublieft.",
             english: "I would like a coffee, please.",
             isCorrect: true,
@@ -79,6 +78,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "This is the standard way to order. “Ik wil graag” (I would like) is polite, and “alstublieft” is the formal “please” you use with staff.",
           },
           {
+            id: "coffee-2b",
             dutch: "Ik wil koffie.",
             english: "I want coffee.",
             isCorrect: false,
@@ -86,6 +86,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "People will understand you, but this sounds blunt — like “I want coffee”. Adding “graag” and “alstublieft” makes it polite without being complicated.",
           },
           {
+            id: "coffee-2c",
             dutch: "Heb je koffie?",
             english: "Do you have coffee?",
             isCorrect: false,
@@ -95,17 +96,20 @@ const SCENARIOS: ScenarioSeed[] = [
         ],
       },
       {
+        id: "coffee-3",
         speaker: "PARTNER",
         dutch: "Natuurlijk. Wilt u er melk en suiker bij?",
         english: "Of course. Would you like milk and sugar with that?",
       },
       {
+        id: "coffee-4",
         speaker: "LEARNER",
         dutch: "Say you want milk but no sugar.",
         english: "Answer the barista's question.",
         hint: "“Wel” and “geen” are useful here: “wel melk” (milk yes), “geen suiker” (no sugar).",
         choices: [
           {
+            id: "coffee-4a",
             dutch: "Wel melk, maar geen suiker, dank u.",
             english: "Milk yes, but no sugar, thank you.",
             isCorrect: true,
@@ -113,6 +117,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "Exactly right. “Geen” is how you say “no” before a noun — “geen suiker”, “geen melk”. “Dank u” is the formal thank you.",
           },
           {
+            id: "coffee-4b",
             dutch: "Ja, melk. Nee, suiker.",
             english: "Yes, milk. No, sugar.",
             isCorrect: false,
@@ -120,6 +125,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "This is confusing — “nee, suiker” sounds like you are asking for sugar. Use “geen suiker” to say you do not want it.",
           },
           {
+            id: "coffee-4c",
             dutch: "Niet suiker, melk graag.",
             english: "Not sugar, milk please.",
             isCorrect: false,
@@ -129,17 +135,20 @@ const SCENARIOS: ScenarioSeed[] = [
         ],
       },
       {
+        id: "coffee-5",
         speaker: "PARTNER",
         dutch: "Prima. Dat is dan drie euro vijftig. Betaalt u met pin of contant?",
         english: "Great. That will be three euros fifty. Are you paying by card or cash?",
       },
       {
+        id: "coffee-6",
         speaker: "LEARNER",
         dutch: "Say you will pay by card.",
         english: "Tell the barista how you want to pay.",
         hint: "In the Netherlands “pinnen” means paying by debit card. It is by far the most common way to pay.",
         choices: [
           {
+            id: "coffee-6a",
             dutch: "Met pin, graag.",
             english: "By card, please.",
             isCorrect: true,
@@ -147,6 +156,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "Short and completely natural. “Pinnen” is the normal Dutch word for paying by debit card — you will hear it everywhere.",
           },
           {
+            id: "coffee-6b",
             dutch: "Ik betaal met geld.",
             english: "I pay with money.",
             isCorrect: false,
@@ -154,6 +164,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "“Geld” just means money in general, so this does not answer the question. Say “met pin” (card) or “contant” (cash).",
           },
           {
+            id: "coffee-6c",
             dutch: "Met creditcard.",
             english: "By credit card.",
             isCorrect: false,
@@ -163,17 +174,20 @@ const SCENARIOS: ScenarioSeed[] = [
         ],
       },
       {
+        id: "coffee-7",
         speaker: "PARTNER",
         dutch: "Dank u wel. Een fijne dag nog!",
         english: "Thank you. Have a nice day!",
       },
       {
+        id: "coffee-8",
         speaker: "LEARNER",
         dutch: "Say goodbye.",
         english: "Close the conversation politely.",
         hint: "“U ook” means “you too” — a short, very common way to return a wish.",
         choices: [
           {
+            id: "coffee-8a",
             dutch: "Dank u wel, u ook!",
             english: "Thank you, you too!",
             isCorrect: true,
@@ -181,6 +195,7 @@ const SCENARIOS: ScenarioSeed[] = [
               "Perfect. “U ook” is what most people actually say back. Short, polite, and it sounds natural.",
           },
           {
+            id: "coffee-8b",
             dutch: "Tot ziens.",
             english: "Goodbye.",
             isCorrect: false,
@@ -192,10 +207,8 @@ const SCENARIOS: ScenarioSeed[] = [
     ],
   },
 
-  // ---------------------------------------------------------------------
-  // Planned situations. Listed so the direction is visible and so I can ask
-  // interview participants which of these they would actually want.
-  // ---------------------------------------------------------------------
+  // Candidates — listed so the direction is visible and so interview
+  // participants can say which of these they would actually want.
   {
     slug: "introducing-yourself",
     title: "Introducing yourself",
@@ -248,82 +261,16 @@ const SCENARIOS: ScenarioSeed[] = [
   },
 ];
 
-async function main() {
-  console.log("Seeding IntegreerNL situations...");
+export const getScenario = (slug: string) => SCENARIOS.find((s) => s.slug === slug);
+export const publishedScenarios = () => SCENARIOS.filter((s) => s.published);
 
-  for (let i = 0; i < SCENARIOS.length; i++) {
-    const s = SCENARIOS[i];
-
-    const scenario = await prisma.scenario.upsert({
-      where: { slug: s.slug },
-      update: {
-        title: s.title,
-        dutchTitle: s.dutchTitle,
-        description: s.description,
-        setting: s.setting ?? "",
-        level: s.level,
-        icon: s.icon,
-        minutes: s.minutes,
-        published: s.published,
-        order: i,
-      },
-      create: {
-        slug: s.slug,
-        title: s.title,
-        dutchTitle: s.dutchTitle,
-        description: s.description,
-        setting: s.setting ?? "",
-        level: s.level,
-        icon: s.icon,
-        minutes: s.minutes,
-        published: s.published,
-        order: i,
-      },
-    });
-
-    // Rewrite the conversation from scratch so the seed stays idempotent.
-    await prisma.scenarioStep.deleteMany({ where: { scenarioId: scenario.id } });
-
-    for (let j = 0; j < (s.steps?.length ?? 0); j++) {
-      const step = s.steps![j];
-      const created = await prisma.scenarioStep.create({
-        data: {
-          scenarioId: scenario.id,
-          order: j,
-          speaker: step.speaker,
-          dutch: step.dutch,
-          english: step.english,
-          hint: step.hint ?? "",
-        },
-      });
-
-      for (let k = 0; k < (step.choices?.length ?? 0); k++) {
-        const c = step.choices![k];
-        await prisma.scenarioChoice.create({
-          data: {
-            stepId: created.id,
-            order: k,
-            dutch: c.dutch,
-            english: c.english,
-            isCorrect: c.isCorrect,
-            feedback: c.feedback,
-          },
-        });
-      }
+/** Looks up a single choice across all situations, for server-side grading. */
+export function findChoice(choiceId: string): Choice | undefined {
+  for (const s of SCENARIOS) {
+    for (const step of s.steps ?? []) {
+      const hit = step.choices?.find((c) => c.id === choiceId);
+      if (hit) return hit;
     }
-
-    const turns = s.steps?.length ?? 0;
-    console.log(`  ✓ ${s.title}${s.published ? ` — ${turns} turns` : " (planned)"}`);
   }
-
-  console.log("Seed complete.");
+  return undefined;
 }
-
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

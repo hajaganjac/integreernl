@@ -142,8 +142,9 @@ decision; not changed unilaterally since the logo is a supplied asset.
   Anything more elaborate — streaks, points, levels — is gamification, which
   Analysis ch. 5 does not cover and which the prompt correctly treats as a
   hypothesis. Not built.
-- SQLite does not work on Vercel's serverless hosting. Moving to Postgres is
-  required before the prototype can be put online for remote user testing.
+- Progress is stored per browser, so it is lost if someone clears their site
+  data and is not shared between devices. Acceptable for a prototype handed to a
+  handful of testers; it would need real accounts for anything beyond that.
 
 ---
 
@@ -171,3 +172,36 @@ simplest option. Documented in `docs/deploying.md`.
 **Also hardened.** The landing page now catches a failed database query and
 hides the situations list instead of returning a 500, so a database problem does
 not take down the page an interview participant opens first.
+
+---
+
+## 2026-10-26 — Removed the database and the accounts entirely
+
+**What changed.** Prisma, Postgres and NextAuth are gone, along with the login
+and registration pages and the `/api/auth` and `/api/register` routes. The
+situations now live in `src/content/scenarios.ts` as plain TypeScript, and
+progress is kept in the browser via `localStorage`. Dependencies went from 16 to
+8, and the app needs no environment variables at all.
+
+**Why.** The previous entry solved the wrong problem. Getting the prototype
+online had grown into: create a Neon account, copy a connection string, set
+`DATABASE_URL` and `AUTH_SECRET` in Vercel, run `prisma migrate deploy` in the
+build, then seed the database. All of that existed to support accounts — and
+accounts appear nowhere in the Analysis document as a requirement. The content
+was already static data sitting in `seed.ts`; it was being loaded into a database
+at build time only so it could be read straight back out.
+
+**Evidence status.** Constraint. A scope decision, not a research result.
+
+**Why it matters for the research.** Analysis ch. 1.5 needs five interview
+participants to try the prototype. They now open a link and are in a conversation
+immediately — no sign-up form between them and the thing being tested. Removing
+the registration wall is a net gain for the testing goal, not a compromise for it.
+
+**Trade-off, stated plainly.** Progress does not follow a person across devices
+and disappears with their site data, and nothing can be measured centrally about
+how testers used it — observation in the interviews has to cover that. If the
+research shows accounts are wanted, this is one commit to reverse.
+
+**Kept.** Replies are still graded server-side in `/api/scenario/answer`, so the
+correct answers are not in the page source. That was never a database feature.

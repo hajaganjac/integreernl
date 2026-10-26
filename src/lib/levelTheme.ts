@@ -1,4 +1,4 @@
-import type { Level } from "@prisma/client";
+import type { Level } from "@/content/scenarios";
 
 /**
  * Situations are colour-coded by CEFR level instead of by exam part.

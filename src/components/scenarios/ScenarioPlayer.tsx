@@ -14,6 +14,7 @@ import {
   PartyPopper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProgress } from "@/lib/useProgress";
 
 interface Choice {
   id: string;
@@ -76,7 +77,7 @@ export function ScenarioPlayer({
   const [error, setError] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const { save } = useProgress();
 
   const totalChoices = steps.filter((s) => s.speaker === "LEARNER").length;
   const step = steps[index];
@@ -119,7 +120,7 @@ export function ScenarioPlayer({
     }
   }
 
-  async function next() {
+  function next() {
     if (!result) return;
 
     const chosen = step.choices.find((c) => c.id === picked);
@@ -142,24 +143,9 @@ export function ScenarioPlayer({
 
     if (landed >= steps.length) {
       setFinished(true);
-      setSaving(true);
-      try {
-        await fetch("/api/scenario/complete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          // correctCount already includes this answer: choose() updated it
-          // when the choice was checked, which was a separate interaction.
-          body: JSON.stringify({
-            scenarioSlug,
-            correct: correctCount,
-            total: totalChoices,
-          }),
-        });
-      } catch {
-        // Progress saving is not critical to finishing the conversation.
-      } finally {
-        setSaving(false);
-      }
+      // correctCount already includes this answer: choose() updated it when
+      // the choice was checked, which was a separate interaction.
+      save(scenarioSlug, { correct: correctCount, total: totalChoices });
     }
   }
 
@@ -197,7 +183,6 @@ export function ScenarioPlayer({
           {correctCount} of {totalChoices} replies were the natural choice.
           {correctCount < totalChoices && " The notes above explain the others."}
         </p>
-        {saving && <p className="mt-2 text-xs text-body-subtle">Saving your progress…</p>}
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button variant="outline" onClick={restart}>

@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { getScenarioBySlug } from "@/lib/data";
+import { notFound } from "next/navigation";
+import { SCENARIOS, getScenario } from "@/content/scenarios";
 import { Container } from "@/components/ui/Container";
 import { ScenarioIcon } from "@/components/scenarios/ScenarioIcon";
 import { ScenarioPlayer } from "@/components/scenarios/ScenarioPlayer";
 import { LEVEL_THEME } from "@/lib/levelTheme";
 import { Clock } from "lucide-react";
+
+/** Every situation is known at build time, so each page is prerendered. */
+export function generateStaticParams() {
+  return SCENARIOS.filter((s) => s.published).map((s) => ({ slug: s.slug }));
+}
 
 export default async function ScenarioPage({
   params,
@@ -14,34 +18,26 @@ export default async function ScenarioPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const session = await auth();
-  if (!session?.user?.id) {
-    redirect(`/login?callbackUrl=/practice/${slug}`);
-  }
-
-  const scenario = await getScenarioBySlug(slug);
-  if (!scenario || !scenario.published || scenario.steps.length === 0) notFound();
+  const scenario = getScenario(slug);
+  if (!scenario || !scenario.published || !scenario.steps?.length) notFound();
 
   const theme = LEVEL_THEME[scenario.level];
 
-  // The correct answer and the feedback stay on the server; the player asks
-  // the API to grade each reply.
+  // Strip isCorrect and feedback before this reaches the browser — the API
+  // route grades each reply instead.
   const safeSteps = scenario.steps.map((s) => ({
     id: s.id,
     speaker: s.speaker,
     dutch: s.dutch,
     english: s.english,
-    hint: s.hint,
-    choices: s.choices.map((c) => ({ id: c.id, dutch: c.dutch, english: c.english })),
+    hint: s.hint ?? "",
+    choices: (s.choices ?? []).map((c) => ({ id: c.id, dutch: c.dutch, english: c.english })),
   }));
 
   return (
     <Container className="py-12">
       <div className="mx-auto max-w-2xl">
-        <Link
-          href="/practice"
-          className={`text-sm font-medium ${theme.text} hover:opacity-80`}
-        >
+        <Link href="/practice" className={`text-sm font-medium ${theme.text} hover:opacity-80`}>
           &larr; All situations
         </Link>
 

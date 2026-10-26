@@ -18,8 +18,10 @@ const SUGGESTIONS = [
   "People keep switching to English. What can I say?",
 ];
 
-export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+export function ChatWindow() {
+  // The conversation lives here only. Nothing is stored server-side, so it
+  // resets on reload — acceptable for a prototype, and it means no account.
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -46,7 +48,10 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
       const res = await fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          history: messages.map((m) => ({ role: m.role, content: m.content })),
+        }),
       });
 
       // Check the status before parsing: an error response can have an empty
@@ -55,7 +60,7 @@ export function ChatWindow({ initialMessages }: { initialMessages: Message[] }) 
       if (!res.ok) {
         showError(
           res.status === 401
-            ? "Your session has expired. Please sign in again."
+            ? "That message could not be sent. Please try rephrasing it."
             : "Sorry, something went wrong. Please try again."
         );
         return;

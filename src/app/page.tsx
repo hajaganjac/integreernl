@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ScenarioIcon } from "@/components/scenarios/ScenarioIcon";
-import { prisma } from "@/lib/prisma";
+import { SCENARIOS } from "@/content/scenarios";
 import { LEVEL_THEME } from "@/lib/levelTheme";
 import { MessageCircle, MousePointerClick, Lightbulb, ArrowRight, Info } from "lucide-react";
 
@@ -43,34 +43,8 @@ const FAQS = [
   },
 ];
 
-/**
- * The landing page is the one page that should still render if the database
- * is unreachable — it is what a first-time visitor (or an interview
- * participant) sees. The situation list is a nice-to-have, so a failed query
- * degrades to hiding that one section rather than returning a 500.
- */
-async function getScenariosSafely() {
-  try {
-    return await prisma.scenario.findMany({
-      orderBy: { order: "asc" },
-      take: 6,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        dutchTitle: true,
-        icon: true,
-        level: true,
-        published: true,
-      },
-    });
-  } catch {
-    return [];
-  }
-}
-
-export default async function Home() {
-  const scenarios = await getScenariosSafely();
+export default function Home() {
+  const scenarios = SCENARIOS.slice(0, 6);
 
   return (
     <>
@@ -88,7 +62,7 @@ export default async function Home() {
             asking where something is. You choose what to say and find out how it lands.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-4">
-            <Button href="/register" size="lg">
+            <Button href="/practice/ordering-coffee" size="lg">
               Try a conversation
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
@@ -131,8 +105,7 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Situations — hidden entirely if the list could not be loaded */}
-      {scenarios.length > 0 && (
+      {/* Situations */}
       <section className="border-b border-ink-100 bg-canvas-raised">
         <Container className="py-20">
           <div className="mx-auto max-w-2xl text-center">
@@ -150,7 +123,7 @@ export default async function Home() {
               const theme = LEVEL_THEME[s.level];
               return (
                 <li
-                  key={s.id}
+                  key={s.slug}
                   className={`flex items-center gap-3 rounded-lg border px-4 py-3 ${
                     s.published
                       ? "border-ink-100 bg-canvas"
@@ -175,7 +148,6 @@ export default async function Home() {
           </ul>
         </Container>
       </section>
-      )}
 
       {/* Questions */}
       <section>
@@ -214,7 +186,7 @@ export default async function Home() {
                 here. What you say shapes what gets built next.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <Button href="/register">
+                <Button href="/practice/ordering-coffee">
                   Try the prototype
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>

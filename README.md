@@ -22,14 +22,14 @@ different level with different content, and Analysis ch. 3.2 puts it out of scop
 
 ## What works today
 
-- **Accounts** — register, log in, log out. Passwords hashed with bcrypt, sessions
-  as signed JWTs.
 - **One complete situation** — *Ordering coffee*: a four-turn conversation where
   you read what the barista says, choose how to reply, and get told why that reply
   does or does not sound natural.
 - **Five candidate situations** — listed, not built. Which get made depends on the
   interviews.
-- **Progress** — which situations you have been through and your best result.
+- **Progress** — which situations you have been through and your best result,
+  saved in your browser. No sign-up: a test participant opens the link and
+  starts straight away.
 - **Study assistant** — a chat page answering common beginner questions. Currently
   pre-written answers matched on keywords; it is wired so a language model can be
   connected by setting `OPENAI_API_KEY`.
@@ -44,30 +44,29 @@ happened.
 
 - **Next.js** (App Router) + TypeScript
 - **Tailwind CSS v4** — design tokens defined once in `globals.css`
-- **Prisma + Postgres** (any host — Neon, Vercel Postgres, Supabase)
-- **NextAuth** for email/password login
+- **No database and no accounts** — situations are a TypeScript file, progress is kept in the browser
 
 ## Running it
 
 ```bash
 npm install
-cp .env.example .env     # then fill in DATABASE_URL and AUTH_SECRET
-npx prisma migrate deploy   # creates the tables
-npm run db:seed             # loads the situations
-npm run dev                 # http://localhost:3000
+npm run dev     # http://localhost:3000
 ```
 
-You need a Postgres connection string — [Neon](https://neon.tech) has a free
-tier. See [`docs/deploying.md`](docs/deploying.md) for the full setup, including
-putting the site online with Vercel.
+That is the whole setup. There is nothing to configure: no database, no
+environment variables, no account to create.
+
+Deploying is the same story — import the repo on Vercel and it builds. Set
+`OPENAI_API_KEY` only if you want the study assistant to use a real language
+model instead of its built-in written answers.
 
 ## How the code is organised
 
 ```
-prisma/schema.prisma   Scenario / ScenarioStep / ScenarioChoice + accounts and progress
-prisma/seed.ts         The situations, including the full Ordering coffee conversation
-src/app/practice/      Situation list and the conversation player page
-src/app/api/scenario/  Grading a reply, and saving a completed run
+src/content/scenarios.ts  All the situations, including the full Ordering coffee conversation
+src/app/practice/         Situation list and the conversation player page
+src/app/api/scenario/     Grading a reply (kept server-side on purpose)
+src/lib/useProgress.ts    Progress, stored in the browser
 src/components/scenarios/ScenarioPlayer.tsx   The interactive conversation
 src/lib/levelTheme.ts  Colour per CEFR level (A0 / A1 / A2)
 docs/development-log.md  Why each decision was made, and what still needs testing
